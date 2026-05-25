@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Claude Ho-Jim — Photography &amp; Travel</title>
+  <meta name="description" content="Travel photography and videos by Claude Ho-Jim. Browse photo albums from the USA, Europe, and beyond.">
+
+  <!-- Open Graph / Social sharing -->
+  <meta property="og:title"       content="Claude Ho-Jim — Photography &amp; Travel">
+  <meta property="og:description" content="Travel photography and videos by Claude Ho-Jim.">
+  <meta property="og:image"       content="https://hojimc.github.io/assets/og-image.jpg">
+  <meta property="og:url"         content="https://hojimc.github.io/">
+  <meta property="og:type"        content="website">
+
+  <!-- Favicon -->
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <!-- ── Navigation ─────────────────────────────────────────── -->
+  <nav class="nav" aria-label="Main navigation">
+    <div class="nav__inner">
+      <a href="/" class="nav__logo">Claude Ho-Jim</a>
+      <button class="nav__toggle" aria-label="Toggle navigation" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav__links" id="nav-links" role="list">
+        <li><a href="/"            class="nav__link nav__link--active">My Photos</a></li>
+        <li><a href="/videos.html" class="nav__link">My Videos</a></li>
+        <li><a href="/blog.html"   class="nav__link">My Blog</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ── Hero ───────────────────────────────────────────────────
+       TO CHANGE THE HERO PHOTO:
+         Option A — Upload your preferred photo as /assets/hero.jpg
+                    then change the URL below to: url('/assets/hero.jpg')
+         Option B — Paste any web-accessible photo URL directly below.
+       The overlay gradient + text are defined in css/style.css (.hero)
+  -->
+  <section class="hero" style="background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEidXrgkXTQ2WgsjxKe_9seq5vaUwpCd4_2hEpyjxQ5KAObv1DYudMHJh8Blp82i6ssy48EE5gQAhVxeLMjJmVUjgKsced8ZTd0tyrtmJeSbmXavY0DolEYC4QBb9Vzfc2GW75kdFHhiq2Y-/s1600/DSC_1993+(Large)+(Small).JPG')">
+    <div class="hero__content">
+      <h1 class="hero__title">Claude Ho-Jim</h1>
+      <p class="hero__subtitle">Travel photography from around the world</p>
+    </div>
+  </section>
+
+  <!-- ── Photo Collections ──────────────────────────────────── -->
+  <main id="main">
+    <section class="section">
+      <div class="container">
+
+        <div class="section__header">
+          <h2 class="section__title">My Photos</h2>
+          <span class="section__count">2 collections</span>
+        </div>
+
+        <div class="grid">
+
+          <!-- ── USA ── -->
+          <a href="/photos/usa.html" class="card card--category">
+            <div class="card__img-wrap">
+              <img
+                class="card__img"
+                src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi41KAofTAF_dCFLsFWaEocAlK7NmpZ0elST-KFXoZyC4_u0tfVNGfy6rMiLZqdIWkjH6wcGlxsu6FJl2WL2KZvNZZHZR1OptXdCFHUMgWkjISjO0d_v3yyuMMUdi7JZQ7V3ZkOJwvYtBdr/w600-h400-no/Sarasota+ville.jpg"
+                alt="USA — Sarasota, Florida"
+                loading="eager"
+              >
+            </div>
+            <div class="card__body">
+              <h3 class="card__title">USA</h3>
+              <p class="card__meta">11 albums &middot; New York, New Orleans, California&hellip;</p>
+            </div>
+          </a>
+
+          <!-- ── Europe ── -->
+          <a href="/photos/europe.html" class="card card--category">
+            <div class="card__img-wrap">
+              <img
+                class="card__img"
+                src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjRD1a3ScQIjNO41pHwwlEzPkZhhliLyyjegc4FGusfExaXOgbg8u9IzfnWK_BkMZWLj4bmUzNYBLksisbJ0VatlRMwIuIpQoVcB5cpnflmHumAtWBEYpfnKIJarWCU-jeQRi0tpSLDoWIO/s1600/Europe.jpg"
+                alt="Europe"
+                loading="lazy"
+              >
+            </div>
+            <div class="card__body">
+              <h3 class="card__title">Europe</h3>
+              <p class="card__meta">3 albums &middot; France, Spain, Italy&hellip;</p>
+            </div>
+          </a>
+
+          <!--
+            ADD MORE CATEGORIES HERE — copy a <a class="card"> block above,
+            update the href, image src, title, and meta text.
+            Example: Canada, Asia, etc.
+          -->
+
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ── Footer ─────────────────────────────────────────────── -->
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2026 Claude Ho-Jim &nbsp;&middot;&nbsp; <a href="mailto:hojimc@hotmail.com">Contact</a></p>
+    </div>
+  </footer>
+
+  <script src="/js/nav.js" defer></script>
+</body>
+</html>

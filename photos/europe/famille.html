@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Famille — Claude Ho-Jim</title>
+  <meta name="description" content="Private family photo album.">
+
+  <!-- No Open Graph for private pages -->
+
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/css/style.css">
+
+  <!-- publicalbum embed stylesheet -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/publicalbum@latest/embed-ui.min.css">
+
+  <!--
+    ╔══════════════════════════════════════════════════════════════╗
+    ║  PASSWORD PROTECTION                                         ║
+    ║                                                              ║
+    ║  This page is protected with a SHA-256 password hash.       ║
+    ║                                                              ║
+    ║  DEMO PASSWORD: "password"                                   ║
+    ║  (Change this before going live — see instructions below)    ║
+    ║                                                              ║
+    ║  TO CHANGE THE PASSWORD:                                     ║
+    ║  1. Open your browser console on any page of the site       ║
+    ║  2. Run this snippet (replace 'your-new-password'):          ║
+    ║                                                              ║
+    ║     (async () => {                                           ║
+    ║       const buf = await crypto.subtle.digest('SHA-256',     ║
+    ║         new TextEncoder().encode('your-new-password'));      ║
+    ║       console.log([...new Uint8Array(buf)]                   ║
+    ║         .map(b => b.toString(16).padStart(2,'0')).join('')); ║
+    ║     })();                                                    ║
+    ║                                                              ║
+    ║  3. Copy the logged hex string                               ║
+    ║  4. Replace the data-hash value in the <script> tag below   ║
+    ╚══════════════════════════════════════════════════════════════╝
+
+    Current hash = SHA-256("password")
+  -->
+  <script
+    src="/js/auth.js"
+    data-hash="5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8"
+    defer>
+  </script>
+</head>
+<body>
+
+  <nav class="nav" aria-label="Main navigation">
+    <div class="nav__inner">
+      <a href="/" class="nav__logo">Claude Ho-Jim</a>
+      <button class="nav__toggle" aria-label="Toggle navigation" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav__links" id="nav-links" role="list">
+        <li><a href="/"            class="nav__link nav__link--active">My Photos</a></li>
+        <li><a href="/videos.html" class="nav__link">My Videos</a></li>
+        <li><a href="/blog.html"   class="nav__link">My Blog</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main id="main">
+    <div class="container">
+
+      <header class="page-header">
+        <a href="/photos/europe.html" class="page-header__back">Europe</a>
+        <h1 class="page-header__title">Famille</h1>
+        <p class="page-header__meta">Private album</p>
+      </header>
+
+      <!--
+        REPLACE THE DATA-LINK BELOW with your Google Photos shared album URL.
+        The album must be set to "Anyone with the link can view" in Google Photos.
+
+        Example: data-link="https://photos.app.goo.gl/YOUR_ALBUM_ID"
+      -->
+      <div
+        class="pa-gallery-player-widget"
+        style="width:100%; height:520px; display:none;"
+        data-link="https://photos.app.goo.gl/REPLACE_WITH_FAMILY_ALBUM_LINK"
+        data-title="Famille"
+        data-description="Family photos">
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2026 Claude Ho-Jim &nbsp;&middot;&nbsp; <a href="mailto:hojimc@hotmail.com">Contact</a></p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/publicalbum@latest/embed-ui.min.js" async defer></script>
+  <script src="/js/nav.js" defer></script>
+</body>
+</html>
