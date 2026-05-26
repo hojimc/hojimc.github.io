@@ -36,15 +36,22 @@
     </div>
   </nav>
 
-  <main id="main">
-    <div class="container">
+  <!-- ── Hero ───────────────────────────────────────────────────
+       TO CHANGE THE HERO PHOTO:
+         Option A — Upload a preferred photo as /assets/hero-blog.jpg
+                    then change the URL below to: url('/assets/hero-blog.jpg')
+         Option B — Paste any web-accessible photo URL directly.
+  -->
+  <section class="hero" style="background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEidXrgkXTQ2WgsjxKe_9seq5vaUwpCd4_2hEpyjxQ5KAObv1DYudMHJh8Blp82i6ssy48EE5gQAhVxeLMjJmVUjgKsced8ZTd0tyrtmJeSbmXavY0DolEYC4QBb9Vzfc2GW75kdFHhiq2Y-/s1600/DSC_1993+(Large)+(Small).JPG')">
+    <div class="hero__content">
+      <h1 class="hero__title">Claude Ho-Jim</h1>
+      <p class="hero__subtitle">Travel stories from around the world</p>
+    </div>
+  </section>
 
-      <header class="page-header">
-        <h1 class="page-header__title">My Blog</h1>
-        <p class="page-header__desc">
-          Travel stories, impressions, and highlights from trips around the world.
-        </p>
-      </header>
+  <main id="main">
+    <section class="section">
+      <div class="container">
 
       <!-- ── Blog post index ─────────────────────────────────────
            COMING SOON — blog posts will appear here.
@@ -85,7 +92,8 @@
         </p>
       </div>
 
-    </div>
+      </div>
+    </section>
   </main>
 
   <footer class="footer">
