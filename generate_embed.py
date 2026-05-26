@@ -50,6 +50,35 @@ def extract_photo_urls(html):
     return [f"{b}={PHOTO_SIZE}" for b in bases]
 
 
+def extract_album_meta(html):
+    """Extract album name and date from the og:title meta tag.
+
+    Google Photos og:title format:
+        "Album Name · Day, Mon DD, YYYY 📸"
+
+    Returns:
+        (album_name, date_str, year) — any value may be None if not found.
+    """
+    m = re.search(r'<meta property="og:title" content="([^"]+)"', html)
+    if not m:
+        return None, None, None
+
+    og_title = m.group(1)
+    # Split on " · " (middle dot U+00B7 with surrounding spaces)
+    parts = og_title.split(' · ', 1)
+    if len(parts) == 2:
+        album_name = parts[0].strip()
+        date_raw   = parts[1].strip()
+        # Strip non-ASCII characters (e.g. the 📸 emoji)
+        date_str = re.sub(r'[^\x00-\x7F]', '', date_raw).strip().rstrip(' .,')
+        year_m = re.search(r'\b(20\d{2})\b', date_str)
+        year = year_m.group(1) if year_m else None
+        return album_name, date_str or None, year
+    else:
+        # No date separator — og:title is just the album name
+        return og_title.strip(), None, None
+
+
 def make_embed(share_url, title, photo_urls):
     """Build the publicalbum <div> block."""
     objects = "\n  ".join(f'<object data="{u}"></object>' for u in photo_urls)

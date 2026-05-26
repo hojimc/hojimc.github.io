@@ -1,44 +1,35 @@
 #!/usr/bin/env python3
 """
-create_album_page.py — Generate a complete photo album HTML page for hojimc.github.io.
+create_photo_page.py — Generate a complete photo album HTML page for hojimc.github.io.
 
-Usage:
-    python create_album_page.py <output_path> <title> [album_url] [password]
-                                [--location TEXT] [--description TEXT]
-                                [--back-label TEXT] [--back-url URL]
+── AUTO MODE (recommended when you have an album URL) ──────────────────────────
+    python create_photo_page.py <parent_dir> <album_url> [password] [options]
 
-Arguments:
-    output_path     Where to save the file, relative to repo root.
-                    e.g.  photos/usa/miami-key-west.html
-    title           Album title shown in the page header.
-                    e.g.  "Miami - Key West"
-    album_url       (optional) Google Photos share link. If provided, the
-                    carousel is generated automatically via generate_embed.py.
-                    e.g.  https://photos.app.goo.gl/PHMb52hzQu7KpgEv8
-    password        (optional) Plain-text password to protect the page.
-                    The SHA-256 hash is computed automatically.
+    Title and filename are derived automatically from the Google Photos album name.
+    e.g.  "Murales 2017"  →  title="Murales 2017", file="murales-2017.html"
 
-Options:
-    --location      Location · year line shown under the title.
-                    e.g.  "Florida, USA · 2018"
-    --description   Optional paragraph shown under the location line.
-    --back-label    Breadcrumb link label (auto-inferred from output_path if omitted).
-    --back-url      Breadcrumb link URL   (auto-inferred from output_path if omitted).
+    Examples:
+        python create_photo_page.py photos/murales/ https://photos.app.goo.gl/XFPP4BNU3p3FZJzc6
+        python create_photo_page.py photos/europe/lille/ https://photos.app.goo.gl/J2FfnjQrz7tjE45P6 mysecretpassword
 
-Examples:
-    # Carousel + no password
-    python create_album_page.py photos/usa/miami-key-west.html "Miami - Key West" \\
-        https://photos.app.goo.gl/PHMb52hzQu7KpgEv8 \\
-        --location "Florida, USA · 2018"
+── EXPLICIT MODE (when you need full control, or no album URL yet) ──────────────
+    python create_photo_page.py <output.html> <title> [album_url] [password] [options]
 
-    # Carousel + password protection
-    python create_album_page.py photos/europe/lille-famille.html "Lille, famille" \\
-        https://photos.app.goo.gl/J2FfnjQrz7tjE45P6 famille2024 \\
-        --location "Lille, France"
+    Examples:
+        python create_photo_page.py photos/usa/miami-key-west.html "Miami - Key West" \\
+            https://photos.app.goo.gl/PHMb52hzQu7KpgEv8 --location "Florida, USA · 2018"
 
-    # No carousel yet (placeholder)
-    python create_album_page.py photos/usa/new-york.html "New York" \\
-        --location "New York, USA"
+        python create_photo_page.py photos/usa/new-york.html "New York" \\
+            --location "New York, USA"
+
+Options (both modes):
+    --location      Location · year line shown under the title, e.g. "Florida, USA · 2018"
+    --description   Optional paragraph shown under the location line
+    --back-label    Breadcrumb label (auto-inferred from path if omitted)
+    --back-url      Breadcrumb URL   (auto-inferred from path if omitted)
+
+Note: --location is optional. If omitted and an album URL is given, the year is
+auto-detected from the album's metadata and printed as a suggestion.
 """
 
 import sys
@@ -51,7 +42,7 @@ import argparse
 # Import generate_embed functions directly (same repo)
 # ---------------------------------------------------------------------------
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from generate_embed import resolve_share_url, fetch, extract_photo_urls, make_embed
+from generate_embed import resolve_share_url, fetch, extract_photo_urls, make_embed, extract_album_meta
 
 
 # ---------------------------------------------------------------------------
@@ -255,36 +246,63 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=__doc__,
     )
-    parser.add_argument("output_path",  help="Output file path, e.g. photos/usa/miami-key-west.html")
-    parser.add_argument("title",        help='Album title, e.g. "Miami - Key West"')
-    parser.add_argument("album_url",    nargs="?", default=None, help="Google Photos share URL (optional)")
-    parser.add_argument("password",     nargs="?", default=None, help="Plain-text password for protection (optional)")
-    parser.add_argument("--location",   default=None, help='Location · year, e.g. "Florida, USA · 2018"')
-    parser.add_argument("--description",default=None, help="Optional description paragraph")
-    parser.add_argument("--back-label", default=None, dest="back_label", help="Breadcrumb label (auto-inferred if omitted)")
-    parser.add_argument("--back-url",   default=None, dest="back_url",   help="Breadcrumb URL (auto-inferred if omitted)")
+    parser.add_argument("output_path", help=(
+        "AUTO MODE:     parent directory, e.g. photos/murales/  "
+        "(title + filename derived from album name)\n"
+        "EXPLICIT MODE: full .html path, e.g. photos/usa/miami-key-west.html"
+    ))
+    parser.add_argument("rest", nargs="*", help=(
+        "AUTO MODE:     album_url [password]\n"
+        "EXPLICIT MODE: title [album_url] [password]"
+    ))
+    parser.add_argument("--location",    default=None, help='Location · year, e.g. "Florida, USA · 2018"')
+    parser.add_argument("--description", default=None, help="Optional description paragraph")
+    parser.add_argument("--back-label",  default=None, dest="back_label", help="Breadcrumb label (auto-inferred if omitted)")
+    parser.add_argument("--back-url",    default=None, dest="back_url",   help="Breadcrumb URL (auto-inferred if omitted)")
     args = parser.parse_args()
 
-    # ── Breadcrumb ──────────────────────────────────────────────────────
-    back_label = args.back_label
-    back_url   = args.back_url
-    if not back_label or not back_url:
-        inf_label, inf_url = infer_breadcrumb(args.output_path)
-        back_label = back_label or inf_label
-        back_url   = back_url   or inf_url
+    # ── Detect mode ─────────────────────────────────────────────────────
+    # Auto mode:     output_path does NOT end in .html  →  it's a parent directory
+    # Explicit mode: output_path ends in .html          →  it's the full output path
+    out_norm  = args.output_path.replace("\\", "/")
+    auto_mode = not out_norm.endswith(".html")
+    rest      = args.rest
+
+    if auto_mode:
+        # rest = [album_url, password?]
+        album_url = rest[0] if len(rest) > 0 else None
+        password  = rest[1] if len(rest) > 1 else None
+        title     = None   # resolved from album metadata below
+        output_path = None  # resolved from album name below
+        if not album_url:
+            parser.error(
+                "Auto mode requires an album URL as the second argument.\n"
+                "  e.g.  python create_photo_page.py photos/murales/ https://photos.app.goo.gl/..."
+            )
+    else:
+        # rest = [title, album_url?, password?]
+        title       = rest[0] if len(rest) > 0 else None
+        album_url   = rest[1] if len(rest) > 1 else None
+        password    = rest[2] if len(rest) > 2 else None
+        output_path = out_norm
+        if not title:
+            parser.error(
+                "Explicit mode requires a title as the second argument.\n"
+                "  e.g.  python create_photo_page.py photos/usa/new-york.html \"New York\""
+            )
 
     # ── Password hash ───────────────────────────────────────────────────
     password_hash = None
-    if args.password:
-        password_hash = sha256_hex(args.password)
+    if password:
+        password_hash = sha256_hex(password)
         print(f"→ Password hash (SHA-256): {password_hash}", file=sys.stderr)
 
-    # ── Carousel embed ──────────────────────────────────────────────────
+    # ── Fetch album (resolve URL, extract metadata + photos) ─────────────
     embed_html = None
-    if args.album_url:
+    if album_url:
         print(f"→ Resolving share URL...", file=sys.stderr)
         try:
-            share_url = resolve_share_url(args.album_url)
+            share_url = resolve_share_url(album_url)
         except Exception as e:
             print(f"  Error resolving URL: {e}", file=sys.stderr)
             sys.exit(1)
@@ -297,6 +315,33 @@ def main():
             print(f"  Error fetching album: {e}", file=sys.stderr)
             sys.exit(1)
 
+        # ── Album metadata ───────────────────────────────────────────────
+        album_name, date_str, year = extract_album_meta(html)
+
+        if auto_mode:
+            if not album_name:
+                print(
+                    "  Error: could not read album name from Google Photos.\n"
+                    "  The album may be private, or try explicit mode instead:\n"
+                    "    python create_photo_page.py <output.html> \"Title\" <album_url>",
+                    file=sys.stderr,
+                )
+                sys.exit(1)
+            title = album_name
+            slug  = slug_from_title(title)
+            output_path = out_norm.rstrip("/") + "/" + slug + ".html"
+            print(f"  Album name: {title!r}", file=sys.stderr)
+            print(f"  Output:     {output_path}", file=sys.stderr)
+
+        if date_str:
+            print(f"  Detected date:  {date_str}", file=sys.stderr)
+        if not args.location:
+            if year:
+                print(f"  ℹ️  --location not set. Detected year: {year}", file=sys.stderr)
+                print(f"      Tip: re-run with --location \"Place · {year}\"", file=sys.stderr)
+            else:
+                print(f"  ℹ️  --location not set. Pass --location \"Place · Year\" to label the page.", file=sys.stderr)
+
         print(f"→ Extracting photo URLs...", file=sys.stderr)
         photo_urls = extract_photo_urls(html)
         print(f"  Found {len(photo_urls)} photos.", file=sys.stderr)
@@ -304,12 +349,20 @@ def main():
         if not photo_urls:
             print("  No photos found — album may be private. Page will be created without carousel.", file=sys.stderr)
         else:
-            embed_html = make_embed(share_url, args.title, photo_urls)
+            embed_html = make_embed(share_url, title, photo_urls)
 
-    # ── Build page ──────────────────────────────────────────────────────
+    # ── Breadcrumb ───────────────────────────────────────────────────────
+    back_label = args.back_label
+    back_url   = args.back_url
+    if not back_label or not back_url:
+        inf_label, inf_url = infer_breadcrumb(output_path)
+        back_label = back_label or inf_label
+        back_url   = back_url   or inf_url
+
+    # ── Build page ───────────────────────────────────────────────────────
     page = build_page(
-        title=args.title,
-        output_path=args.output_path,
+        title=title,
+        output_path=output_path,
         embed_html=embed_html,
         password_hash=password_hash,
         location=args.location,
@@ -318,18 +371,17 @@ def main():
         back_url=back_url,
     )
 
-    # ── Write file ──────────────────────────────────────────────────────
-    out = args.output_path.replace("\\", "/")
-    os.makedirs(os.path.dirname(os.path.abspath(out)) if os.path.dirname(out) else ".", exist_ok=True)
-    with open(out, "w", encoding="utf-8") as f:
+    # ── Write file ───────────────────────────────────────────────────────
+    os.makedirs(os.path.dirname(os.path.abspath(output_path)) if os.path.dirname(output_path) else ".", exist_ok=True)
+    with open(output_path, "w", encoding="utf-8") as f:
         f.write(page)
 
-    print(f"→ Saved: {out}", file=sys.stderr)
-    if args.password:
+    print(f"→ Saved: {output_path}", file=sys.stderr)
+    if password:
         print(f"  ⚠️  Page is password-protected. Share the password separately.", file=sys.stderr)
-    if not args.album_url:
+    if not album_url:
         print(f"  ℹ️  No album URL provided — carousel placeholder inserted.", file=sys.stderr)
-        print(f"      Add later: python generate_embed.py <url> \"{args.title}\"", file=sys.stderr)
+        print(f"      Add later: python generate_embed.py <url> \"{title}\"", file=sys.stderr)
 
 
 if __name__ == "__main__":
