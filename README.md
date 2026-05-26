@@ -110,8 +110,8 @@ This overwrites the existing file with fresh photo URLs.
      <div class="card__img-wrap">
        <img class="card__img" src="https://img.youtube.com/vi/YOUR_VIDEO_ID/hqdefault.jpg" alt="Video title" loading="lazy">
      </div>
-     <div class="card__info">
-       <p class="card__title">Video Title</p>
+     <div class="card__body">
+       <h3 class="card__title">Video Title</h3>
        <p class="card__meta">Location · Year</p>
      </div>
    </a>
