@@ -3,6 +3,9 @@
 CLAUDE.md
 links.md
 
+# Audit scripts (local tooling only)
+audit/
+
 # Python
 __pycache__/
 *.pyc

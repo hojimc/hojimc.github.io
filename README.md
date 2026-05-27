@@ -131,6 +131,26 @@ This overwrites the existing file with fresh photo URLs.
 
 ---
 
+## Felix — Changing a page password
+
+Some pages (e.g. family albums) are password-protected. To set a real password:
+
+1. Run `generate_hash.py` to get the SHA-256 hash:
+   ```bash
+   python generate_hash.py
+   # Enter password when prompted → copies hash + ready-to-paste <script> tag
+   ```
+2. Open the protected HTML file (e.g. `photos/europe/famille.html`) and find line 8:
+   ```html
+   <script src="/js/auth.js" data-hash="CURRENT_HASH_HERE" defer></script>
+   ```
+3. Replace the hash value with the one printed by `generate_hash.py`
+4. Commit and push — the new password is live within ~60 seconds
+
+> Pages that need a real password before sharing with family: `photos/europe/famille.html` and `photos/europe/lille-2014/lille-famille.html` (both currently use the demo password `password`).
+
+---
+
 ## All Google Photos album links
 
 All album links are stored in **`links.md`** in the project root (not pushed to GitHub — local only).
