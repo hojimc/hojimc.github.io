@@ -230,6 +230,7 @@ def build_page(
     </div>
   </footer>
 {publicalbum_js}
+  <script src="/js/breadcrumb.js" defer></script>
   <script src="/js/nav.js" defer></script>
 </body>
 </html>

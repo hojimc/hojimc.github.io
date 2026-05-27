@@ -21,10 +21,19 @@
   if (!from) return;
 
   const map = {
-    portfolio: { label: 'Portfolio',  url: '/photos/portfolio.html' },
-    sarasota:  { label: 'Sarasota',   url: '/photos/usa/sarasota.html' },
-    murales:   { label: 'Murales',    url: '/photos/murales.html' },
-    home:      { label: 'My Photos',  url: '/' },
+    home:           { label: 'My Photos',      url: '/' },
+    portfolio:      { label: 'Portfolio',      url: '/photos/portfolio.html' },
+    usa:            { label: 'USA',            url: '/photos/usa.html' },
+    europe:         { label: 'Europe',         url: '/photos/europe.html' },
+    caraibes:       { label: 'Caraïbes',       url: '/photos/caraibes.html' },
+    murales:        { label: 'Murales',        url: '/photos/murales.html' },
+    sarasota:       { label: 'Sarasota',       url: '/photos/usa/sarasota.html' },
+    vacances:       { label: 'Vacances',       url: '/photos/usa/vacances.html' },
+    california:     { label: 'California',     url: '/photos/usa/california.html' },
+    'amusement-parks': { label: 'Amusement Parks', url: '/photos/usa/amusement-parks.html' },
+    'europe-2013':  { label: 'Europe 2013',    url: '/photos/europe/europe-2013.html' },
+    'lille-2014':   { label: 'Lille',          url: '/photos/europe/lille-2014.html' },
+    'espagne-2018': { label: 'Espagne 2018',   url: '/photos/europe/espagne-2018.html' },
   };
 
   const dest = map[from];
