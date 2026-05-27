@@ -305,7 +305,10 @@ button { font: inherit; cursor: pointer; border: none; background: none; }
   margin-top: 3px;
 }
 
-/* ── Category cards (larger, for top-level pages) ───────────── */
+/* ── Category cards (link to a folder of sub-albums) ────────── */
+.card--category {
+  border-top: 3px solid var(--accent);
+}
 .card--category .card__body {
   padding: 18px 20px 20px;
 }

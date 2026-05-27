@@ -10,7 +10,7 @@ Live site: **https://hojimc.github.io**
 
 Use `create_photo_page.py` to generate a complete, ready-to-deploy HTML file.
 
-### Auto mode (recommended) — title and filename come from the album
+### Auto mode (recommended)
 
 Just give the parent folder and the Google Photos link. The script reads the album name, generates the slug, and creates the file:
 
@@ -18,61 +18,38 @@ Just give the parent folder and the Google Photos link. The script reads the alb
 python create_photo_page.py photos/murales/ https://photos.app.goo.gl/XFPP4BNU3p3FZJzc6
 # → Album name: 'Murales 2017'
 # → Output:     photos/murales/murales-2017.html
-# → Detected date: Saturday, Jun 17, 2017
-# → Tip: re-run with --location "Place · 2017"
+# → Tip: re-run with --location "Montréal, Canada · 2017"
 ```
 
-With location (once you know the city):
+With location and optional password:
 
 ```bash
 python create_photo_page.py photos/murales/ https://photos.app.goo.gl/XFPP4BNU3p3FZJzc6 \
     --location "Montréal, Canada · 2017"
-```
 
-With password protection:
-
-```bash
-python create_photo_page.py photos/europe/lille/ https://photos.app.goo.gl/J2FfnjQrz7tjE45P6 mysecretpassword \
+python create_photo_page.py photos/europe/ https://photos.app.goo.gl/J2FfnjQrz7tjE45P6 mysecretpassword \
     --location "Lille, France · 2014"
 ```
 
-> The password is SHA-256 hashed automatically — the plain-text password is never stored in the file.
+> **Year auto-detection:** omitting `--location` is fine on a first run — the script reads the year from Google Photos and prints a suggestion. The city/country must be typed manually.
 
-### Explicit mode — full control over path and title
+### Arguments
 
-Use this for placeholder pages (no album yet), or when you need a custom filename:
-
-```bash
-# Placeholder — no album yet, carousel added later
-python create_photo_page.py photos/usa/new-york.html "New York" \
-    --location "New York, USA"
-
-# Full explicit with album URL
-python create_photo_page.py photos/usa/miami-key-west.html "Miami - Key West" \
-    https://photos.app.goo.gl/PHMb52hzQu7KpgEv8 \
-    --location "Florida, USA · 2017"
-```
-
-### All arguments
-
-| Argument | Mode | Description |
-|---|---|---|
-| `parent_dir/` | auto | Parent folder — title and filename auto-derived from album |
-| `output.html` | explicit | Full output path |
-| `album_url` | auto (required) / explicit (optional) | Google Photos share link |
-| `title` | explicit only | Album title shown in the page header |
-| `password` | both | Plain-text password — SHA-256 hashed automatically |
-| `--location` | both | Location · year shown under the title |
-| `--description` | both | Description paragraph under the location |
-| `--back-label` | both | Breadcrumb label (auto-inferred from path if omitted) |
-| `--back-url` | both | Breadcrumb URL (auto-inferred from path if omitted) |
-
-> **Year auto-detection:** omitting `--location` is fine on a first run — the script reads the year from Google Photos and prints a suggestion. Only the year is auto-detected; the city/country must be typed manually.
+| Argument | Description |
+|---|---|
+| `parent_dir/` | Parent folder — title and filename auto-derived from album |
+| `album_url` | Google Photos share link |
+| `password` | Plain-text password — SHA-256 hashed automatically |
+| `--location` | Location · year shown under the title |
+| `--description` | Description paragraph under the location |
 
 ### After running the script
 
-1. Open the **parent category page** (e.g. `photos/usa.html`) and add a new `.card` entry linking to the new file.
-2. Commit and push:
+1. Open the **parent category page** (e.g. `photos/usa.html`) and add a new card:
+   - Album cards (leaf pages): `class="card"`
+   - Folder cards (pages with sub-albums): `class="card card--category"` with meta `N albums · Name1, Name2…`
+2. If new photos are added to an album later, re-run the same command to regenerate the page with fresh photo URLs.
+3. Commit and push — live within ~60 seconds:
 
 ```bash
 git add .
@@ -80,21 +57,25 @@ git commit -m "add Miami - Key West album"
 git push
 ```
 
-GitHub Pages rebuilds automatically — live within ~60 seconds.
-
 ---
 
-## Felix — Refreshing a carousel (new photos added to an album)
+## Felix — Changing a page password
 
-Photo URLs are baked in at generation time. If new photos were added to an album on Google Photos, regenerate the page:
+1. Run `generate_hash.py` to get the SHA-256 hash:
+   ```bash
+   python generate_hash.py
+   # Enter password when prompted → prints hash + ready-to-paste <script> tag
+   ```
+2. Open the protected HTML file and replace the `data-hash` value in line 8:
+   ```html
+   <script src="/js/auth.js" data-hash="REPLACE_THIS" defer></script>
+   ```
+3. Commit and push — live within ~60 seconds.
 
-```bash
-python create_photo_page.py photos/usa/miami-key-west.html "Miami - Key West" \
-    https://photos.app.goo.gl/PHMb52hzQu7KpgEv8 \
-    --location "Florida, USA · 2017"
-```
-
-This overwrites the existing file with fresh photo URLs.
+> Pages that still use the demo password `password` — update before sharing with family:
+> - `photos/europe/famille.html`
+> - `photos/europe/lille-2014/lille-famille.html`
+> - `photos/caraibes/punta-cana-famille-2010.html`
 
 ---
 
@@ -131,38 +112,6 @@ This overwrites the existing file with fresh photo URLs.
 
 ---
 
-## Felix — Changing a page password
-
-Some pages (e.g. family albums) are password-protected. To set a real password:
-
-1. Run `generate_hash.py` to get the SHA-256 hash:
-   ```bash
-   python generate_hash.py
-   # Enter password when prompted → copies hash + ready-to-paste <script> tag
-   ```
-2. Open the protected HTML file (e.g. `photos/europe/famille.html`) and find line 8:
-   ```html
-   <script src="/js/auth.js" data-hash="CURRENT_HASH_HERE" defer></script>
-   ```
-3. Replace the hash value with the one printed by `generate_hash.py`
-4. Commit and push — the new password is live within ~60 seconds
-
-> Pages that need a real password before sharing with family: `photos/europe/famille.html` and `photos/europe/lille-2014/lille-famille.html` (both currently use the demo password `password`).
-
----
-
 ## All Google Photos album links
 
 All album links are stored in **`links.md`** in the project root (not pushed to GitHub — local only).
-
----
-
-## Deploying (Felix)
-
-```bash
-git add .
-git commit -m "describe what changed"
-git push
-```
-
-GitHub Pages rebuilds automatically — live within ~60 seconds.
