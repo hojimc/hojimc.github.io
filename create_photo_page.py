@@ -175,7 +175,8 @@ def build_page(
 
     # ── publicalbum script ───────────────────────────────────────────────
     publicalbum_js = (
-        '\n  <!-- publicalbum embed script — loads the carousel above -->\n'
+        '\n  <script src="/js/gallery.js"></script>\n'
+        '  <!-- publicalbum embed script — loads the carousel above -->\n'
         '  <script src="https://cdn.jsdelivr.net/npm/publicalbum@latest/embed-ui.min.js" async></script>'
         if embed_html else ""
     )

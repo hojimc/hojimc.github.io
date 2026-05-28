@@ -327,6 +327,17 @@ button { font: inherit; cursor: pointer; border: none; background: none; }
   overflow: hidden;
 }
 
+.gallery-cta {
+  margin-top: 10px;
+  text-align: right;
+  font-size: 0.85rem;
+}
+.gallery-cta a {
+  color: var(--accent);
+  transition: opacity var(--transition);
+}
+.gallery-cta a:hover { opacity: 0.75; }
+
 /* ── Video wrapper (responsive 16:9) ────────────────────────── */
 .video-wrapper {
   position: relative;
@@ -530,6 +541,12 @@ button { font: inherit; cursor: pointer; border: none; background: none; }
 /* ── Responsive — Tablet (≤768px) ───────────────────────────── */
 @media (max-width: 768px) {
   :root { --gap: 16px; }
+
+  /* Widget height tracks 16:9 ratio of the actual container width */
+  .pa-gallery-player-widget {
+    height: calc((100vw - 2 * var(--gap)) * 9 / 16) !important;
+    min-height: 220px !important;
+  }
 
   .nav__toggle { display: flex; }
 
