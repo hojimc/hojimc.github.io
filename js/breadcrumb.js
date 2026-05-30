@@ -14,6 +14,14 @@
  *   sarasota  → Sarasota  (/photos/usa/sarasota.html)
  *   murales   → Murales   (/photos/murales.html)
  *   home      → My Photos (/)
+ *   — video keys —
+ *   videos         → My Videos      (/videos.html)
+ *   drone          → Drone Videos   (/videos/drone.html)
+ *   felix-et-anais → Félix et Anaïs (/videos/felix-et-anais.html)
+ *   travel         → Travel Videos  (/videos/travel.html)
+ *   other          → Other          (/videos/other.html)
+ *   videos-de-felix → Vidéos de Félix (/videos/other/videos-de-felix.html)
+ *   olivier        → Olivier        (/videos/other/olivier.html)
  */
 (function () {
   const params = new URLSearchParams(window.location.search);
@@ -34,6 +42,13 @@
     'europe-2013':  { label: 'Europe 2013',    url: '/photos/europe/europe-2013.html' },
     'lille-2014':   { label: 'Lille',          url: '/photos/europe/lille-2014.html' },
     'espagne-2018': { label: 'Espagne 2018',   url: '/photos/europe/espagne-2018.html' },
+    videos:            { label: 'My Videos',       url: '/videos.html' },
+    drone:             { label: 'Drone Videos',    url: '/videos/drone.html' },
+    'felix-et-anais':  { label: 'Félix et Anaïs',  url: '/videos/felix-et-anais.html' },
+    travel:            { label: 'Travel Videos',   url: '/videos/travel.html' },
+    other:             { label: 'Other',            url: '/videos/other.html' },
+    'videos-de-felix': { label: 'Vidéos de Félix', url: '/videos/other/videos-de-felix.html' },
+    olivier:           { label: 'Olivier',          url: '/videos/other/olivier.html' },
   };
 
   const dest = map[from];

@@ -2,6 +2,9 @@
 .claude/
 CLAUDE.md
 links.md
+arborescence.md
+arborescence.html
+arborescence/
 
 # Audit scripts (local tooling only)
 audit/

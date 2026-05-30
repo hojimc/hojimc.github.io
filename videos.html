@@ -36,12 +36,6 @@
     </div>
   </nav>
 
-  <!-- ── Hero ───────────────────────────────────────────────────
-       TO CHANGE THE HERO PHOTO:
-         Option A — Upload a preferred photo as /assets/hero-videos.jpg
-                    then change the URL below to: url('/assets/hero-videos.jpg')
-         Option B — Paste any web-accessible photo URL directly.
-  -->
   <section class="hero" style="background-image: url('/assets/hero.jpg')">
     <div class="hero__content">
       <h1 class="hero__title">Claude Ho-Jim</h1>
@@ -55,49 +49,70 @@
 
         <div class="section__header">
           <h2 class="section__title">My Videos</h2>
-          <span class="section__count">3 collections</span>
+          <span class="section__count">4 collections</span>
         </div>
 
         <div class="grid">
 
-        <!-- Drone Videos ✅ sample video exists under /videos/travel/ -->
-        <a href="/videos/drone.html" class="card card--category">
-          <div class="card__img-wrap">
-            <div class="card__img-placeholder">🚁</div>
-          </div>
-          <div class="card__body">
-            <h3 class="card__title">Drone Videos</h3>
-            <p class="card__meta">Aerial footage from trips around the world</p>
-          </div>
-        </a>
+          <a href="/videos/travel.html" class="card card--category">
+            <div class="card__img-wrap">
+              <img
+                class="card__img"
+                src="https://img.youtube.com/vi/p6-uRjfggyk/hqdefault.jpg"
+                alt="Travel Videos"
+                loading="lazy"
+              >
+            </div>
+            <div class="card__body">
+              <h3 class="card__title">Travel Videos</h3>
+              <p class="card__meta">2 vidéos &middot; Australia, Québec</p>
+            </div>
+          </a>
 
-        <!-- Félix et Anaïs -->
-        <a href="/videos/felix-et-anais.html" class="card card--category">
-          <div class="card__img-wrap">
-            <div class="card__img-placeholder">👨‍👩‍👧‍👦</div>
-          </div>
-          <div class="card__body">
-            <h3 class="card__title">Félix et Anaïs</h3>
-            <p class="card__meta">Family videos</p>
-          </div>
-        </a>
+          <a href="/videos/drone.html" class="card card--category">
+            <div class="card__img-wrap">
+              <img
+                class="card__img"
+                src="https://img.youtube.com/vi/Lis1eJP5hCc/hqdefault.jpg"
+                alt="Drone Videos"
+                loading="lazy"
+              >
+            </div>
+            <div class="card__body">
+              <h3 class="card__title">Drone Videos</h3>
+              <p class="card__meta">8 vidéos &middot; Florida</p>
+            </div>
+          </a>
 
-        <!-- Travel Videos ✅ Fraser Island sample exists -->
-        <a href="/videos/travel.html" class="card card--category">
-          <div class="card__img-wrap">
-            <div class="card__img-placeholder">✈️</div>
-          </div>
-          <div class="card__body">
-            <h3 class="card__title">Travel Videos</h3>
-            <p class="card__meta">Australia, Fraser Island, New Orleans&hellip;</p>
-          </div>
-        </a>
+          <a href="/videos/felix-et-anais.html" class="card card--category">
+            <div class="card__img-wrap">
+              <img
+                class="card__img"
+                src="https://img.youtube.com/vi/NB5YlgJ_SG4/hqdefault.jpg"
+                alt="Félix et Anaïs"
+                loading="lazy"
+              >
+            </div>
+            <div class="card__body">
+              <h3 class="card__title">Félix et Anaïs</h3>
+              <p class="card__meta">6 vidéos &middot; 2001&ndash;2015</p>
+            </div>
+          </a>
 
-        <!--
-          ADD MORE VIDEO CATEGORIES HERE.
-          For categories with a YouTube thumbnail, replace the placeholder div with:
-          <img class="card__img" src="https://img.youtube.com/vi/VIDEO_ID/hqdefault.jpg" alt="..." loading="lazy">
-        -->
+          <a href="/videos/other.html" class="card card--category">
+            <div class="card__img-wrap">
+              <img
+                class="card__img"
+                src="https://img.youtube.com/vi/JeFXSo81tXA/hqdefault.jpg"
+                alt="Other"
+                loading="lazy"
+              >
+            </div>
+            <div class="card__body">
+              <h3 class="card__title">Other</h3>
+              <p class="card__meta">2 collections</p>
+            </div>
+          </a>
 
         </div>
 
