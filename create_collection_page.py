@@ -42,7 +42,7 @@ import sys
 import os
 import argparse
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "lib"))
 from _page_builder import (
     slug_from_title, infer_breadcrumb,
     build_collection_page, make_category_card, ensure_parent, write_page,

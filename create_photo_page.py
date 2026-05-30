@@ -39,7 +39,9 @@ import sys
 import os
 import argparse
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+_here = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, _here)
+sys.path.insert(0, os.path.join(_here, "lib"))
 from generate_embed import (
     resolve_share_url, fetch, extract_photo_urls, make_embed, extract_album_meta,
 )

@@ -39,7 +39,7 @@ import json
 import argparse
 import urllib.request
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "lib"))
 from _page_builder import (
     slug_from_title, infer_breadcrumb,
     build_video_page, make_video_card, ensure_parent, write_page,
