@@ -41,7 +41,7 @@ import urllib.request
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "lib"))
 from _page_builder import (
-    slug_from_title, infer_breadcrumb,
+    slug_from_title, infer_breadcrumb, sha256_hex,
     build_video_page, make_video_card, ensure_parent, write_page,
     prompt_required, prompt_optional,
 )
@@ -83,6 +83,8 @@ def main():
     parser.add_argument("--back-url",    default=None, dest="back_url")
     parser.add_argument("--no-parent",   action="store_true", dest="no_parent",
                         help="Skip updating the parent collection page")
+    parser.add_argument("--password",    default=None,
+                        help="Password to protect the page (e.g. Claude)")
     args = parser.parse_args()
 
     out_norm  = args.output_path.replace("\\", "/")
@@ -131,6 +133,7 @@ def main():
         back_url   = back_url   or inf_url
 
     # ── Build & write page ───────────────────────────────────────────────────
+    password_hash = sha256_hex(args.password) if args.password else None
     print()
     page = build_video_page(
         title=title,
@@ -140,6 +143,7 @@ def main():
         description=args.description,
         back_label=back_label,
         back_url=back_url,
+        password_hash=password_hash,
     )
     write_page(output_path, page)
 

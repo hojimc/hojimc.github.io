@@ -53,6 +53,14 @@ LABEL_MAP = {
 }
 
 
+def _label_for_key(key: str) -> str:
+    if key in LABEL_MAP:
+        return LABEL_MAP[key]
+    fallback = key.replace("-", " ").title()
+    print(f"  warning: no LABEL_MAP entry for '{key}' — using '{fallback}'", file=sys.stderr)
+    return fallback
+
+
 # ---------------------------------------------------------------------------
 # Utilities
 # ---------------------------------------------------------------------------
@@ -89,7 +97,7 @@ def infer_breadcrumb(output_path: str):
     if len(parts) < 2:
         return None, None
     parent_slug = parts[-2]
-    label = LABEL_MAP.get(parent_slug, parent_slug.replace("-", " ").title())
+    label = _label_for_key(parent_slug)
     url   = "/" + "/".join(parts[:-1]) + ".html"
     return label, url
 
@@ -113,8 +121,7 @@ def key_from_path(output_path: str) -> str:
 
 
 def label_from_path(output_path: str) -> str:
-    key = key_from_path(output_path)
-    return LABEL_MAP.get(key, key.replace("-", " ").title())
+    return _label_for_key(key_from_path(output_path))
 
 
 # ---------------------------------------------------------------------------
@@ -149,15 +156,18 @@ def prompt_yes(question: str, default_yes: bool = True) -> bool:
 # ---------------------------------------------------------------------------
 
 def _head(title: str, description: str, og_url: str,
-          password_hash: str = None, has_carousel: bool = False) -> str:
+          password_hash: str = None, has_carousel: bool = False,
+          og_image: str = None, page_type: str = "photo") -> str:
     protected = password_hash is not None
 
     if protected:
         og_title = f"Private Album — {SITE_OWNER}"
-        og_desc  = f"Private photo album by {SITE_OWNER}."
+        og_desc  = f"Private {page_type} album by {SITE_OWNER}."
+        og_img   = f"{SITE_URL}/assets/og-image.jpg"
     else:
         og_title = f"{title} — {SITE_OWNER}"
         og_desc  = description
+        og_img   = og_image or f"{SITE_URL}/assets/og-image.jpg"
 
     carousel_css = (
         "\n  <!-- publicalbum embed stylesheet -->\n"
@@ -167,7 +177,7 @@ def _head(title: str, description: str, og_url: str,
     )
 
     auth_script = (
-        f"\n  <script src=\"/js/auth.js\" data-hash=\"{password_hash}\" defer></script>"
+        f"  <script src=\"/js/auth.js\" data-hash=\"{password_hash}\" defer></script>\n\n"
         if protected else ""
     )
 
@@ -180,17 +190,17 @@ def _head(title: str, description: str, og_url: str,
 
   <meta property="og:title"       content="{og_title}">
   <meta property="og:description" content="{og_desc}">
-  <meta property="og:image"       content="{SITE_URL}/assets/og-image.jpg">
+  <meta property="og:image"       content="{og_img}">
   <meta property="og:url"         content="{og_url}">
   <meta property="og:type"        content="website">
 
-  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+{auth_script}  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="{FONT_URL}" rel="stylesheet">
 
-  <link rel="stylesheet" href="/css/style.css">{carousel_css}{auth_script}
+  <link rel="stylesheet" href="/css/style.css">{carousel_css}
 </head>"""
 
 
@@ -331,7 +341,13 @@ def build_photo_page(title: str, output_path: str, embed_html: str = None,
                      back_url: str = None) -> str:
     section      = infer_section(output_path)
     has_carousel = embed_html is not None
-    desc         = f"Photos: {title} — {SITE_OWNER}."
+    desc         = f"Photos: {title} by {SITE_OWNER}."
+
+    og_image = None
+    if embed_html:
+        m = re.search(r'<object\s[^>]*data="([^"]+)"', embed_html)
+        if m:
+            og_image = re.sub(r'=w\d+(-h\d+)?$', '=w1200', m.group(1))
 
     carousel_block = (
         f"      {embed_html}"
@@ -349,7 +365,7 @@ def build_photo_page(title: str, output_path: str, embed_html: str = None,
     return (
         f'<!DOCTYPE html>\n'
         f'<html lang="en">\n'
-        f'{_head(title, desc, og_url_from_path(output_path), password_hash, has_carousel)}\n'
+        f'{_head(title, desc, og_url_from_path(output_path), password_hash, has_carousel, og_image)}\n'
         f'<body>\n\n'
         f'{_nav(section)}\n\n'
         f'  <main id="main">\n'
@@ -369,9 +385,15 @@ def build_photo_page(title: str, output_path: str, embed_html: str = None,
 
 def build_video_page(title: str, output_path: str, youtube_id: str = None,
                      location: str = None, description: str = None,
-                     back_label: str = None, back_url: str = None) -> str:
-    section = infer_section(output_path)
-    desc    = f"Video: {title} — {SITE_OWNER}."
+                     back_label: str = None, back_url: str = None,
+                     password_hash: str = None) -> str:
+    section  = infer_section(output_path)
+    loc_part = f", {location}" if location else ""
+    desc     = f"Vidéo — {title}{loc_part} — {SITE_OWNER}"
+    yt_thumb = (
+        f"https://img.youtube.com/vi/{youtube_id}/hqdefault.jpg"
+        if youtube_id else None
+    )
 
     if youtube_id:
         embed_block = (
@@ -391,7 +413,7 @@ def build_video_page(title: str, output_path: str, youtube_id: str = None,
     return (
         f'<!DOCTYPE html>\n'
         f'<html lang="en">\n'
-        f'{_head(title, desc, og_url_from_path(output_path))}\n'
+        f'{_head(title, desc, og_url_from_path(output_path), password_hash=password_hash, og_image=yt_thumb, page_type="video")}\n'
         f'<body>\n\n'
         f'{_nav(section)}\n\n'
         f'  <main id="main">\n'
@@ -478,6 +500,14 @@ def inject_card_into_collection(html_path: str, card_html: str) -> bool:
     """
     with open(html_path, "r", encoding="utf-8") as f:
         html = f.read()
+
+    href_match = re.search(r'href="([^"]+)"', card_html)
+    if href_match:
+        href_val = href_match.group(1)
+        if f'href="{href_val}"' in html:
+            print(f"  ! Card for {href_val} already exists in {html_path} — skipping.",
+                  file=sys.stderr)
+            return False
 
     MARKER = "        <!-- /grid -->"
     if MARKER in html:

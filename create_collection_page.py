@@ -23,6 +23,8 @@ Usage:
 Options:
     --meta          Subtitle line shown under the title (prompted interactively if omitted)
     --description   Optional longer description paragraph
+    --thumbnail     Card thumbnail URL (overrides --youtube-id)
+    --youtube-id    Derive card thumbnail from a YouTube video ID (video collections)
     --back-label    Breadcrumb label (auto-inferred from path if omitted)
     --back-url      Breadcrumb URL   (auto-inferred from path if omitted)
     --no-parent     Skip updating the parent collection page
@@ -66,6 +68,10 @@ def main():
                         help='Subtitle, e.g. "Florida, USA · 3 albums" or "13 videos"')
     parser.add_argument("--description", default=None,
                         help="Optional longer description paragraph")
+    parser.add_argument("--thumbnail",   default=None,
+                        help="Card thumbnail URL (overrides --youtube-id)")
+    parser.add_argument("--youtube-id",  default=None, dest="youtube_id",
+                        help="Derive card thumbnail from a YouTube video ID (video collections)")
     parser.add_argument("--back-label",  default=None, dest="back_label")
     parser.add_argument("--back-url",    default=None, dest="back_url")
     parser.add_argument("--no-parent",   action="store_true", dest="no_parent",
@@ -116,10 +122,14 @@ def main():
 
     # ── Update parent collection ─────────────────────────────────────────────
     if not args.no_parent:
+        thumbnail = args.thumbnail
+        if not thumbnail and args.youtube_id:
+            thumbnail = f"https://img.youtube.com/vi/{args.youtube_id}/hqdefault.jpg"
         card = make_category_card(
             href=bc_url,
             title=args.title,
             meta=meta,
+            thumbnail_url=thumbnail,
         )
         print("\n→ Checking parent collection...", file=sys.stderr)
         ensure_parent(output_path, card)
