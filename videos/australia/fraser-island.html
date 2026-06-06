@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fraser Island — Claude Ho-Jim</title>
+  <meta name="description" content="Video from Fraser Island, Australia by Claude Ho-Jim.">
+
+  <meta property="og:title"       content="Fraser Island — Claude Ho-Jim">
+  <meta property="og:description" content="Video from Fraser Island, Australia.">
+  <meta property="og:image"       content="https://hojimc.github.io/assets/og-image.jpg">
+  <meta property="og:url"         content="https://hojimc.github.io/videos/australia/fraser-island.html">
+  <meta property="og:type"        content="website">
+
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <nav class="nav" aria-label="Main navigation">
+    <div class="nav__inner">
+      <a href="/" class="nav__logo">Claude Ho-Jim</a>
+      <button class="nav__toggle" aria-label="Toggle navigation" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav__links" id="nav-links" role="list">
+        <li><a href="/"            class="nav__link">My Photos</a></li>
+        <li><a href="/videos.html" class="nav__link nav__link--active">My Videos</a></li>
+        <li><a href="/blog.html"   class="nav__link">My Blog</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main id="main">
+    <div class="container">
+
+      <header class="page-header">
+        <a href="/videos/australia.html" class="page-header__back">Australia</a>
+        <h1 class="page-header__title">Fraser Island</h1>
+        <p class="page-header__meta">Australia &middot; 1995</p>
+
+        <!--
+          OPTIONAL DESCRIPTION — add a sentence about this video.
+          Delete or uncomment the <p> below.
+        -->
+        <p class="page-header__desc">
+          Fraser Island (K'gari) is the world's largest sand island, located off
+          the coast of Queensland, Australia. This video captures the island's
+          stunning lakes, beaches, and rainforests.
+        </p>
+      </header>
+
+      <!-- ── YouTube Embed ──────────────────────────────────────────
+           HOW TO UPDATE:
+             1. Open the YouTube video
+             2. Click Share → Embed
+             3. Copy the video ID from the src URL
+                (e.g. https://www.youtube.com/embed/XXXXXXXXXXX)
+             4. Replace YOUTUBE_VIDEO_ID_HERE below with that ID
+
+           The video must be set to Public or Unlisted on YouTube.
+      -->
+      <div class="video-wrapper">
+        <iframe
+          src="https://www.youtube.com/embed/p6-uRjfggyk"
+          title="Fraser Island, Australia"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowfullscreen>
+        </iframe>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2026 Claude Ho-Jim &nbsp;&middot;&nbsp; <a href="mailto:hojimc@hotmail.com">Contact</a></p>
+    </div>
+  </footer>
+
+  <script src="/js/breadcrumb.js" defer></script>
+  <script src="/js/nav.js" defer></script>
+</body>
+</html>
