@@ -5,11 +5,11 @@ generate_embed.py — Generate publicalbum embed HTML from a Google Photos share
 Replaces the need to use reabr.com manually.
 
 Usage:
-    python generate_embed.py <google_photos_url> "<Album Title>" [output_file.html]
+    python scripts/generate_embed.py <google_photos_url> "<Album Title>" [output_file.html]
 
 Examples:
-    python generate_embed.py https://photos.app.goo.gl/PHMb52hzQu7KpgEv8 "Miami - Key West"
-    python generate_embed.py https://photos.app.goo.gl/PHMb52hzQu7KpgEv8 "Miami - Key West" output.html
+    python scripts/generate_embed.py https://photos.app.goo.gl/PHMb52hzQu7KpgEv8 "Miami - Key West"
+    python scripts/generate_embed.py https://photos.app.goo.gl/PHMb52hzQu7KpgEv8 "Miami - Key West" output.html
 
 If no output file is given, prints the embed <div> to stdout so you can copy-paste it.
 """

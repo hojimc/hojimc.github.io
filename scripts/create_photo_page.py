@@ -3,19 +3,19 @@
 create_photo_page.py — Generate a photo album page for hojimc.github.io.
 
 AUTO MODE — title + filename inferred from the Google Photos album name:
-    python create_photo_page.py <parent_dir/> <album_url> [options]
+    python scripts/create_photo_page.py <parent_dir/> <album_url> [options]
 
     Examples:
-        python create_photo_page.py photos/murales/ https://photos.app.goo.gl/XFPP4BNU3p3FZJzc6
-        python create_photo_page.py photos/europe/lille/ https://photos.app.goo.gl/J2FfnjQrz7tjE45P6 --password secret
+        python scripts/create_photo_page.py photos/murales/ https://photos.app.goo.gl/XFPP4BNU3p3FZJzc6
+        python scripts/create_photo_page.py photos/europe/lille/ https://photos.app.goo.gl/J2FfnjQrz7tjE45P6 --password secret
 
 EXPLICIT MODE — full control over path and title:
-    python create_photo_page.py <output.html> <title> [album_url] [options]
+    python scripts/create_photo_page.py <output.html> <title> [album_url] [options]
 
     Examples:
-        python create_photo_page.py photos/usa/miami-key-west.html "Miami - Key West" \\
+        python scripts/create_photo_page.py photos/usa/miami-key-west.html "Miami - Key West" \
             https://photos.app.goo.gl/PHMb52hzQu7KpgEv8 --location "Florida, USA · 2018"
-        python create_photo_page.py photos/usa/new-york.html "New York"   # no album yet
+        python scripts/create_photo_page.py photos/usa/new-york.html "New York"   # no album yet
 
 Options:
     --location      "Place · Year" shown under the title (prompted interactively if omitted)
@@ -93,7 +93,7 @@ def main():
         if not album_url:
             parser.error(
                 "Auto mode requires an album URL.\n"
-                "  e.g.  python create_photo_page.py photos/murales/ https://photos.app.goo.gl/..."
+                "  e.g.  python scripts/create_photo_page.py photos/murales/ https://photos.app.goo.gl/..."
             )
     else:
         title       = rest[0] if rest else None
@@ -102,7 +102,7 @@ def main():
         if not title:
             parser.error(
                 "Explicit mode requires a title.\n"
-                "  e.g.  python create_photo_page.py photos/usa/new-york.html \"New York\""
+                "  e.g.  python scripts/create_photo_page.py photos/usa/new-york.html \"New York\""
             )
 
     password_hash = sha256_hex(args.password) if args.password else None
@@ -133,7 +133,7 @@ def main():
                 sys.exit(
                     "Error: could not read album name from Google Photos.\n"
                     "The album may be private. Try explicit mode:\n"
-                    "  python create_photo_page.py <output.html> 'Title' <album_url>"
+                    "  python scripts/create_photo_page.py <output.html> 'Title' <album_url>"
                 )
             title       = album_name
             output_path = out_norm.rstrip("/") + "/" + slug_from_title(title) + ".html"
@@ -187,7 +187,7 @@ def main():
         print("  ⚠️  Password-protected. Share the password separately.", file=sys.stderr)
     if not album_url:
         print(f'  ℹ️  No album URL — carousel placeholder inserted.', file=sys.stderr)
-        print(f'      Later: python generate_embed.py <url> "{title}"', file=sys.stderr)
+        print(f'      Later: python scripts/generate_embed.py <url> "{title}"', file=sys.stderr)
 
     # ── Update parent collection ─────────────────────────────────────────────
     if not args.no_parent:

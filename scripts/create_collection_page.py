@@ -6,19 +6,19 @@ A collection page shows a grid of cards linking to sub-albums or sub-collections
 This script handles both photo collections and video collections (same HTML structure).
 
 Usage:
-    python create_collection_page.py <output.html OR parent_dir/> <title> [options]
+    python scripts/create_collection_page.py <output.html OR parent_dir/> <title> [options]
 
     Photo examples:
-        python create_collection_page.py photos/usa/sarasota.html "Sarasota" \\
+        python scripts/create_collection_page.py photos/usa/sarasota.html "Sarasota" \
             --meta "Florida, USA · 3 albums"
 
-        python create_collection_page.py photos/europe/ "Nouvelle Région"
+        python scripts/create_collection_page.py photos/europe/ "Nouvelle Région"
 
     Video examples:
-        python create_collection_page.py videos/drone.html "Drone Videos" \\
+        python scripts/create_collection_page.py videos/drone.html "Drone Videos" \
             --meta "13 videos · Sarasota, Florida"
 
-        python create_collection_page.py videos/ "New Category"
+        python scripts/create_collection_page.py videos/ "New Category"
 
 Options:
     --meta          Subtitle line shown under the title (prompted interactively if omitted)

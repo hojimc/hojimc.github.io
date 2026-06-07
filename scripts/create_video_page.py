@@ -3,19 +3,19 @@
 create_video_page.py — Generate a video page for hojimc.github.io.
 
 AUTO MODE — title fetched from YouTube, filename derived from title:
-    python create_video_page.py <parent_dir/> <youtube_id> [options]
+    python scripts/create_video_page.py <parent_dir/> <youtube_id> [options]
 
     Examples:
-        python create_video_page.py videos/travel/ p6-uRjfggyk
-        python create_video_page.py videos/drone/ abc123XYZ --location "Sarasota, Florida · 2022"
+        python scripts/create_video_page.py videos/travel/ p6-uRjfggyk
+        python scripts/create_video_page.py videos/drone/ abc123XYZ --location "Sarasota, Florida · 2022"
 
 EXPLICIT MODE — full control:
-    python create_video_page.py <output.html> <title> [youtube_id] [options]
+    python scripts/create_video_page.py <output.html> <title> [youtube_id] [options]
 
     Examples:
-        python create_video_page.py videos/travel/fraser-island.html "Fraser Island" \\
+        python scripts/create_video_page.py videos/travel/fraser-island.html "Fraser Island" \
             p6-uRjfggyk --location "Australia · 1995"
-        python create_video_page.py videos/travel/new-video.html "New Video"   # no YouTube ID yet
+        python scripts/create_video_page.py videos/travel/new-video.html "New Video"   # no YouTube ID yet
 
 Options:
     --location      "Place · Year" shown under the title (prompted interactively if omitted)

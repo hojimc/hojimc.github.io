@@ -2,8 +2,8 @@
 generate_hash.py — Generate a SHA-256 hash for use as a page password.
 
 Usage:
-    python generate_hash.py
-    python generate_hash.py mysecretpassword
+    python scripts/generate_hash.py
+    python scripts/generate_hash.py mysecretpassword
 """
 
 import hashlib

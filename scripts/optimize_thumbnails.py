@@ -2,9 +2,9 @@
 Optimize card thumbnails for web: resize to 600px wide and convert to WebP.
 
 Usage:
-    python optimize_thumbnails.py                    # process all non-WebP images in assets/thumbnails/
-    python optimize_thumbnails.py path/to/image.jpg  # process a specific file
-    python optimize_thumbnails.py path/to/folder/    # process a specific subfolder
+    python scripts/optimize_thumbnails.py                    # process all non-WebP images in assets/thumbnails/
+    python scripts/optimize_thumbnails.py path/to/image.jpg  # process a specific file
+    python scripts/optimize_thumbnails.py path/to/folder/    # process a specific subfolder
 
 After running, pass the .webp path to create_photo_page.py --thumbnail.
 """
@@ -13,7 +13,7 @@ import sys
 from pathlib import Path
 from PIL import Image
 
-REPO = Path(__file__).parent
+REPO = Path(__file__).parent.parent
 THUMB_DIR = REPO / "assets" / "thumbnails"
 MAX_WIDTH = 600
 WEBP_QUALITY = 85

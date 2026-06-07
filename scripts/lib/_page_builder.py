@@ -314,7 +314,7 @@ def make_category_card(href: str, title: str, meta: str = None, thumbnail_url: s
 
 _CAROUSEL_PLACEHOLDER = '''\
       <!-- ── Google Photos Carousel ──────────────────────────────────
-           Run:  python generate_embed.py <google_photos_url> "{title}"
+           Run:  python scripts/generate_embed.py <google_photos_url> "{title}"
            Then paste the output <div> block here in place of this comment.
       -->
       <div class="coming-soon">
