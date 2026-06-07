@@ -1,8 +1,8 @@
 /**
  * breadcrumb.js — Dynamic breadcrumb swapping via ?from= URL parameter.
  *
- * Some album pages are reachable from multiple parent pages (e.g. Birds of Sarasota
- * appears under both Florida and Portfolio). When a parent page links here with
+ * Some album pages are reachable from multiple parent pages. When a parent page links
+ * here with
  * ?from=<key>, this script swaps the breadcrumb link to point back to that parent.
  * If no ?from= is present, the default breadcrumb in the HTML is used as-is.
  *
@@ -17,7 +17,6 @@
   const map = {
     // ── Photo keys ──────────────────────────────────────────────────────────
     home:              { label: 'My Photos',       url: '/' },
-    portfolio:         { label: 'Portfolio',       url: '/photos/portfolio.html' },
     usa:               { label: 'USA',             url: '/photos/usa.html' },
     florida:           { label: 'Florida',         url: '/photos/usa/florida.html' },
     europe:            { label: 'Europe',          url: '/photos/europe.html' },
