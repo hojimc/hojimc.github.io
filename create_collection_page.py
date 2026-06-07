@@ -28,6 +28,7 @@ Options:
     --back-label    Breadcrumb label (auto-inferred from path if omitted)
     --back-url      Breadcrumb URL   (auto-inferred from path if omitted)
     --no-parent     Skip updating the parent collection page
+    --position      Card slot in parent grid (1 = first; default: append)
 
 After creation the script:
   1. Registers the new collection in js/breadcrumb.js automatically
@@ -76,6 +77,8 @@ def main():
     parser.add_argument("--back-url",    default=None, dest="back_url")
     parser.add_argument("--no-parent",   action="store_true", dest="no_parent",
                         help="Skip updating the parent collection page")
+    parser.add_argument("--position",    type=int, default=None,
+                        help="Card slot in parent grid (1 = first; default: append)")
     args = parser.parse_args()
 
     out_norm = args.output_path.replace("\\", "/")
@@ -132,7 +135,7 @@ def main():
             thumbnail_url=thumbnail,
         )
         print("\n→ Checking parent collection...", file=sys.stderr)
-        ensure_parent(output_path, card)
+        ensure_parent(output_path, card, position=args.position)
 
     print("\nDone.", file=sys.stderr)
 

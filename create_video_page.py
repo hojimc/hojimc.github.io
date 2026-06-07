@@ -23,6 +23,8 @@ Options:
     --back-label    Breadcrumb label (auto-inferred from path if omitted)
     --back-url      Breadcrumb URL   (auto-inferred from path if omitted)
     --no-parent     Skip updating the parent collection page
+    --password      Plain-text password; script hashes it with SHA-256 automatically
+    --position      Card slot in parent grid (1 = first; default: append)
 
 After creation the script:
   1. Prompts for missing --location interactively
@@ -85,6 +87,8 @@ def main():
                         help="Skip updating the parent collection page")
     parser.add_argument("--password",    default=None,
                         help="Password to protect the page (e.g. Claude)")
+    parser.add_argument("--position",    type=int, default=None,
+                        help="Card slot in parent grid (1 = first; default: append)")
     args = parser.parse_args()
 
     out_norm  = args.output_path.replace("\\", "/")
@@ -160,7 +164,7 @@ def main():
             youtube_id=youtube_id,
         )
         print("\n→ Checking parent collection...", file=sys.stderr)
-        ensure_parent(output_path, card)
+        ensure_parent(output_path, card, position=args.position)
         propagate_counts_up(output_path)
 
     print("\nDone.", file=sys.stderr)

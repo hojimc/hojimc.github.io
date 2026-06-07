@@ -492,9 +492,11 @@ def _find_grid_close(html: str) -> int:
     return -1
 
 
-def inject_card_into_collection(html_path: str, card_html: str) -> bool:
+def inject_card_into_collection(html_path: str, card_html: str,
+                                position: int = None) -> bool:
     """Insert card_html into the .grid of an existing collection page.
 
+    position: 1-based card slot (1 = first). None or out-of-range → append.
     Strategy 1: look for <!-- /grid --> marker (pages created by these scripts).
     Strategy 2: find the closing </div> of .grid by counting depth.
     Writes in-place. Returns True on success.
@@ -511,18 +513,34 @@ def inject_card_into_collection(html_path: str, card_html: str) -> bool:
             return False
 
     MARKER = "        <!-- /grid -->"
-    if MARKER in html:
-        html = html.replace(MARKER, f"{card_html}\n\n{MARKER}", 1)
-    else:
-        close_idx = _find_grid_close(html)
-        if close_idx == -1:
-            print(f"  ! Could not find .grid in {html_path} — card not injected.",
-                  file=sys.stderr)
-            return False
-        # Insert before the line containing </div>
-        line_start = html.rfind("\n", 0, close_idx)
-        insert_at  = (line_start + 1) if line_start != -1 else close_idx
-        html = html[:insert_at] + card_html + "\n\n" + html[insert_at:]
+    inserted = False
+
+    if position is not None:
+        grid_m = re.search(r'<div[^>]*class="grid"[^>]*>', html)
+        if grid_m:
+            grid_end = html.find(MARKER) if MARKER in html else _find_grid_close(html)
+            if grid_end != -1:
+                grid_content = html[grid_m.end():grid_end]
+                offsets = [m.start() for m in
+                           re.finditer(r'<a\b[^>]*class="card', grid_content)]
+                if offsets and position <= len(offsets):
+                    target    = grid_m.end() + offsets[position - 1]
+                    line_start = html.rfind('\n', 0, target) + 1
+                    html      = html[:line_start] + card_html + "\n\n" + html[line_start:]
+                    inserted  = True
+
+    if not inserted:
+        if MARKER in html:
+            html = html.replace(MARKER, f"{card_html}\n\n{MARKER}", 1)
+        else:
+            close_idx = _find_grid_close(html)
+            if close_idx == -1:
+                print(f"  ! Could not find .grid in {html_path} — card not injected.",
+                      file=sys.stderr)
+                return False
+            line_start = html.rfind("\n", 0, close_idx)
+            insert_at  = (line_start + 1) if line_start != -1 else close_idx
+            html = html[:insert_at] + card_html + "\n\n" + html[insert_at:]
 
     with open(html_path, "w", encoding="utf-8") as f:
         f.write(html)
@@ -732,9 +750,10 @@ def propagate_counts_up(child_path: str) -> None:
 # Recursive parent management
 # ---------------------------------------------------------------------------
 
-def ensure_parent(child_path: str, card_html: str) -> None:
+def ensure_parent(child_path: str, card_html: str, position: int = None) -> None:
     """Ensure the parent collection exists and contains card_html.
 
+    position: 1-based slot for the injected card (None → append).
     If parent is missing, offer to create it interactively and recurse up the tree.
     """
     parent_path = infer_parent_path(child_path)
@@ -743,7 +762,7 @@ def ensure_parent(child_path: str, card_html: str) -> None:
 
     if os.path.exists(parent_path):
         print(f"  → Updating: {parent_path}", file=sys.stderr)
-        inject_card_into_collection(parent_path, card_html)
+        inject_card_into_collection(parent_path, card_html, position=position)
         return
 
     parent_label = label_from_path(parent_path)

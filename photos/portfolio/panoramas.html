@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panoramas — Claude Ho-Jim</title>
+  <meta name="description" content="Photos: Panoramas by Claude Ho-Jim.">
+
+  <meta property="og:title"       content="Panoramas — Claude Ho-Jim">
+  <meta property="og:description" content="Photos: Panoramas by Claude Ho-Jim.">
+  <meta property="og:image"       content="https://64.media.tumblr.com/e9587e2e0d38c3dd9e682c2f087f3651/tumblr_nn340glXex1utwojeo1_500h.jpg">
+  <meta property="og:url"         content="https://hojimc.github.io/photos/portfolio/panoramas.html">
+  <meta property="og:type"        content="website">
+
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"></noscript>
+
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <nav class="nav" aria-label="Main navigation">
+    <div class="nav__inner">
+      <a href="/" class="nav__logo">Claude Ho-Jim</a>
+      <button class="nav__toggle" aria-label="Toggle navigation" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav__links" id="nav-links" role="list">
+        <li><a href="/"            class="nav__link nav__link--active">My Photos</a></li>
+        <li><a href="/videos.html" class="nav__link">My Videos</a></li>
+        <li><a href="/blog.html"   class="nav__link">My Blog</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main id="main">
+    <div class="container">
+
+      <header class="page-header">
+        <a href="/photos/portfolio.html" class="page-header__back">Portfolio</a>
+        <h1 class="page-header__title">Panoramas</h1>
+        <p class="page-header__meta">Sarasota · 2015</p>
+      </header>
+
+      <div class="panorama-carousel" role="region" aria-label="Panorama slideshow">
+        <div class="panorama-carousel__track" id="pan-track">
+
+          <div class="panorama-carousel__slide panorama-carousel__slide--active" role="group" aria-label="1 of 4">
+            <img class="panorama-carousel__img"
+              src="https://64.media.tumblr.com/e9587e2e0d38c3dd9e682c2f087f3651/tumblr_nn340glXex1utwojeo1_1280.jpg"
+              alt="Siesta Beach, Sarasota at 7am" loading="lazy">
+          </div>
+
+          <div class="panorama-carousel__slide" role="group" aria-label="2 of 4">
+            <img class="panorama-carousel__img"
+              src="https://64.media.tumblr.com/62974f2d3cdf2cf2b905a13ff752eb73/tumblr_nn33ksTRlg1utwojeo1_1280.jpg"
+              alt="John Ringling Venetian Palace" loading="lazy">
+          </div>
+
+          <div class="panorama-carousel__slide" role="group" aria-label="3 of 4">
+            <img class="panorama-carousel__img"
+              src="https://64.media.tumblr.com/9a349726ad09803565cfe455438e9cb9/tumblr_nn33jaEF3M1utwojeo1_1280.jpg"
+              alt="John Ringling Museum of Art — The garden of the Cà d'Zan mansion" loading="lazy">
+          </div>
+
+          <div class="panorama-carousel__slide" role="group" aria-label="4 of 4">
+            <img class="panorama-carousel__img"
+              src="https://64.media.tumblr.com/b52204185454b0de673d4b3db00f544c/tumblr_nn32r7VyRj1utwojeo1_1280.jpg"
+              alt="Le salon de notre maison" loading="lazy">
+          </div>
+
+        </div>
+
+        <button class="panorama-carousel__btn panorama-carousel__btn--prev" id="pan-prev" aria-label="Previous photo">&#8592;</button>
+        <button class="panorama-carousel__btn panorama-carousel__btn--next" id="pan-next" aria-label="Next photo">&#8594;</button>
+      </div>
+
+      <div class="panorama-carousel__footer">
+        <p class="panorama-carousel__caption" id="pan-caption">Siesta Beach, Sarasota at 7am</p>
+        <span class="panorama-carousel__counter" id="pan-counter">1 / 4</span>
+      </div>
+
+      <div class="gallery-cta">
+        <a href="https://hojimc.tumblr.com" target="_blank" rel="noopener">View on Tumblr ↗</a>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2026 Claude Ho-Jim &nbsp;&middot;&nbsp; <a href="mailto:hojimc@hotmail.com">Contact</a></p>
+    </div>
+  </footer>
+
+  <script src="/js/breadcrumb.js" defer></script>
+  <script src="/js/nav.js" defer></script>
+  <script>
+    (function () {
+      var slides   = document.querySelectorAll('.panorama-carousel__slide');
+      var captions = [
+        'Siesta Beach, Sarasota at 7am',
+        'John Ringling Venetian Palace',
+        'John Ringling Museum of Art — The garden of the Cà d’Zan mansion',
+        'Le salon de notre maison',
+      ];
+      var prevBtn    = document.getElementById('pan-prev');
+      var nextBtn    = document.getElementById('pan-next');
+      var captionEl  = document.getElementById('pan-caption');
+      var counterEl  = document.getElementById('pan-counter');
+      var current    = 0;
+
+      function goTo(index) {
+        slides[current].classList.remove('panorama-carousel__slide--active');
+        current = (index + slides.length) % slides.length;
+        slides[current].classList.add('panorama-carousel__slide--active');
+        captionEl.textContent = captions[current];
+        counterEl.textContent = (current + 1) + ' / ' + slides.length;
+      }
+
+      prevBtn.addEventListener('click', function () { goTo(current - 1); });
+      nextBtn.addEventListener('click', function () { goTo(current + 1); });
+
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'ArrowLeft')  goTo(current - 1);
+        if (e.key === 'ArrowRight') goTo(current + 1);
+      });
+
+      var touchStartX = 0;
+      var track = document.getElementById('pan-track');
+      track.addEventListener('touchstart', function (e) {
+        touchStartX = e.touches[0].clientX;
+      }, { passive: true });
+      track.addEventListener('touchend', function (e) {
+        var dx = e.changedTouches[0].clientX - touchStartX;
+        if (Math.abs(dx) > 40) goTo(current + (dx < 0 ? 1 : -1));
+      });
+    })();
+  </script>
+</body>
+</html>

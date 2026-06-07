@@ -63,7 +63,7 @@ if __name__ == "__main__":
     if len(sys.argv) > 1:
         targets = []
         for a in sys.argv[1:]:
-            targets.extend(collect_targets(Path(a)))
+            targets.extend(collect_targets(Path(a).resolve()))
     else:
         targets = [p for p in sorted(THUMB_DIR.rglob("*")) if p.suffix.lower() in SOURCE_EXTS]
 
