@@ -82,7 +82,7 @@ def extract_album_meta(html):
 def make_embed(share_url, title, photo_urls):
     """Build the publicalbum <div> block."""
     objects = "\n  ".join(f'<object data="{u}"></object>' for u in photo_urls)
-    return f"""<div class="pa-gallery-player-widget" style="width:100%; height:480px; display:none;"
+    return f"""<div class="pa-gallery-player-widget" style="width:100%; display:none;"
   data-delay="3"
   data-link="{share_url}"
   data-title="{title}"

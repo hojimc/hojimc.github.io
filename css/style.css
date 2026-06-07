@@ -307,10 +307,10 @@ button { font: inherit; cursor: pointer; border: none; background: none; }
 .card--category .card__body::before {
   content: 'COLLECTION';
   display: block;
-  font-size: 0.6rem;
+  font-size: 0.65rem;
   font-weight: 700;
   letter-spacing: 0.14em;
-  color: var(--accent);
+  color: var(--text);
   margin-bottom: 7px;
 }
 .card--category .card__title {
@@ -323,8 +323,26 @@ button { font: inherit; cursor: pointer; border: none; background: none; }
 /* ── Google Photos carousel ──────────────────────────────────── */
 /* The publicalbum widget uses display:none by default — JS removes it on load */
 .pa-gallery-player-widget {
+  height: clamp(420px, 55vh, 700px);
   border-radius: var(--radius);
   overflow: hidden;
+}
+
+@keyframes shimmer {
+  from { background-position: -200% 0; }
+  to   { background-position:  200% 0; }
+}
+.gallery-skeleton {
+  height: clamp(420px, 55vh, 700px);
+  border-radius: var(--radius);
+  background: linear-gradient(
+    90deg,
+    var(--bg-alt) 25%,
+    #ede9e4 50%,
+    var(--bg-alt) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
 }
 
 .gallery-cta {
@@ -549,6 +567,10 @@ button { font: inherit; cursor: pointer; border: none; background: none; }
   .pa-gallery-player-widget {
     height: calc((100vw - 2 * var(--gap)) * 9 / 16) !important;
     min-height: 220px !important;
+  }
+  .gallery-skeleton {
+    height: calc((100vw - 2 * var(--gap)) * 9 / 16);
+    min-height: 220px;
   }
 
   .nav__toggle { display: flex; }

@@ -198,7 +198,8 @@ def _head(title: str, description: str, og_url: str,
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="{FONT_URL}" rel="stylesheet">
+  <link rel="preload" href="{FONT_URL}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="{FONT_URL}"></noscript>
 
   <link rel="stylesheet" href="/css/style.css">{carousel_css}
 </head>"""

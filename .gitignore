@@ -8,6 +8,7 @@ arborescence/
 
 # Audit scripts (local tooling only)
 audit/
+node_modules/
 
 # Python
 __pycache__/
