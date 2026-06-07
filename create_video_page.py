@@ -43,7 +43,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "lib
 from _page_builder import (
     slug_from_title, infer_breadcrumb, sha256_hex,
     build_video_page, make_video_card, ensure_parent, write_page,
-    prompt_required, prompt_optional,
+    prompt_required, prompt_optional, propagate_counts_up,
 )
 
 
@@ -161,6 +161,7 @@ def main():
         )
         print("\n→ Checking parent collection...", file=sys.stderr)
         ensure_parent(output_path, card)
+        propagate_counts_up(output_path)
 
     print("\nDone.", file=sys.stderr)
 

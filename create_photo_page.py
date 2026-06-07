@@ -48,7 +48,7 @@ from generate_embed import (
 from _page_builder import (
     sha256_hex, slug_from_title, infer_breadcrumb,
     build_photo_page, make_photo_card, ensure_parent, write_page,
-    prompt_optional,
+    prompt_optional, propagate_counts_up,
 )
 
 
@@ -198,6 +198,7 @@ def main():
         )
         print("\n→ Checking parent collection...", file=sys.stderr)
         ensure_parent(output_path, card)
+        propagate_counts_up(output_path)
 
     print("\nDone.", file=sys.stderr)
 

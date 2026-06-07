@@ -570,6 +570,164 @@ def update_breadcrumb_js(js_path: str, key: str, label: str, url: str) -> bool:
 
 
 # ---------------------------------------------------------------------------
+# Recursive count utilities
+# ---------------------------------------------------------------------------
+
+# Pages whose sub-content collapses to a single leaf in ancestor counts
+SINGLE_LEAF_PAGES = {'videos/famille/olivier.html'}
+
+# Root collection pages by section (no standard infer_parent_path entry)
+_ROOT_COLLECTION = {
+    'photos': 'index.html',
+    'videos': 'videos.html',
+}
+
+
+def count_recursive_leaves(collection_path: str, visited: set = None) -> int:
+    """Count leaf pages reachable from a collection page.
+
+    card--category links are recursed into; plain card links count as 1 each.
+    SINGLE_LEAF_PAGES always count as 1 regardless of their own content.
+    """
+    if visited is None:
+        visited = set()
+
+    norm = collection_path.replace('\\', '/')
+    if norm in SINGLE_LEAF_PAGES:
+        return 1
+
+    abs_p = os.path.abspath(collection_path)
+    if abs_p in visited or not os.path.exists(collection_path):
+        return 0
+    visited.add(abs_p)
+
+    with open(collection_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+    content = re.sub(r'<!--.*?-->', '', content, flags=re.DOTALL)
+
+    total = 0
+    for block in re.findall(r'<a\b[^>]*class="card[^"]*"[^>]*>.*?</a>', content, re.DOTALL):
+        href_m = re.search(r'href="(/[^"]+)"', block)
+        if not href_m:
+            continue
+        child = href_m.group(1).lstrip('/').rstrip('/')
+        if not child.endswith('.html'):
+            child += '.html'
+        child_norm = child.replace('\\', '/')
+        if child_norm in SINGLE_LEAF_PAGES:
+            total += 1
+        elif 'card--category' in block and os.path.exists(child):
+            total += count_recursive_leaves(child, visited)
+        else:
+            total += 1
+
+    return total
+
+
+def _update_card_meta_count_in_file(html_path: str, href: str, new_count: int) -> None:
+    """Replace the leading integer before 'album(s)'/'video(s)' in the card__meta
+    for the card pointing to href inside html_path.
+
+    Scopes the replacement to the specific card block to avoid cross-card matches.
+    """
+    if not os.path.exists(html_path):
+        return
+    with open(html_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+
+    # Locate the specific card block containing this href
+    escaped = re.escape(href)
+    card_m = re.search(rf'<a\b[^>]*href="{escaped}"[^>]*>.*?</a>', content, re.DOTALL)
+    if not card_m:
+        return
+
+    card_block = card_m.group(0)
+    unit_word = 'video' if new_count == 1 else 'videos'
+    if 'album' in card_block:
+        unit_word = 'album' if new_count == 1 else 'albums'
+
+    new_card, n = re.subn(
+        r'(class="card__meta"[^>]*>[^<]*?)\b\d+(\s+)(?:album|video)s?',
+        rf'\g<1>{new_count}\g<2>{unit_word}',
+        card_block,
+        count=1,
+        flags=re.DOTALL,
+    )
+    if n and new_card != card_block:
+        new_content = content[:card_m.start()] + new_card + content[card_m.end():]
+        with open(html_path, 'w', encoding='utf-8') as f:
+            f.write(new_content)
+        print(f'  → Updated card count in {html_path} for {href}: {new_count}', file=sys.stderr)
+
+
+def update_collection_count(collection_path: str) -> None:
+    """Recompute the recursive leaf count for a collection page and write it
+    into the page's own page-header__meta, then update its card in the parent page.
+
+    Skips pages in SINGLE_LEAF_PAGES (their own header should stay as-is).
+    """
+    norm = collection_path.replace('\\', '/')
+    if norm in SINGLE_LEAF_PAGES or not os.path.exists(collection_path):
+        return
+
+    new_count = count_recursive_leaves(collection_path)
+    section = infer_section(collection_path)
+    unit_word = 'video' if new_count == 1 else 'videos'
+    if section != 'videos':
+        unit_word = 'album' if new_count == 1 else 'albums'
+
+    with open(collection_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+
+    # Replace the count in page-header__meta; handles "Florida, USA · 11 albums"
+    new_content, _ = re.subn(
+        r'(class="page-header__meta"[^>]*>[^<]*?)\b\d+(\s+)(?:album|video)s?',
+        rf'\g<1>{new_count}\g<2>{unit_word}',
+        content,
+        count=1,
+        flags=re.DOTALL,
+    )
+    if new_content != content:
+        with open(collection_path, 'w', encoding='utf-8') as f:
+            f.write(new_content)
+        print(f'  → page-header__meta updated in {collection_path}: {new_count} {unit_word}',
+              file=sys.stderr)
+
+    # Update the count in the parent's card__meta for this collection
+    href = '/' + norm
+    parent = infer_parent_path(collection_path)
+    if parent is None:
+        parent = _ROOT_COLLECTION.get(section)
+    if parent:
+        _update_card_meta_count_in_file(parent, href, new_count)
+
+
+def propagate_counts_up(child_path: str) -> None:
+    """Walk up from child_path updating every ancestor collection's count."""
+    path = child_path.replace('\\', '/')
+    processed: set = set()
+
+    while True:
+        parent = infer_parent_path(path)
+        if parent is None:
+            # For top-level collections (photos/x.html, videos/x.html):
+            # update them and their card in index.html / videos.html,
+            # unless already handled in a previous loop iteration.
+            parts = path.split('/')
+            if len(parts) == 2 and parts[0] in ('photos', 'videos') and path not in processed:
+                update_collection_count(path)
+                processed.add(path)
+            break
+
+        if parent in processed or not os.path.exists(parent):
+            break
+
+        update_collection_count(parent)
+        processed.add(parent)
+        path = parent
+
+
+# ---------------------------------------------------------------------------
 # Recursive parent management
 # ---------------------------------------------------------------------------
 
