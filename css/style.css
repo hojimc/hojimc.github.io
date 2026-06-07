@@ -381,6 +381,7 @@ button { font: inherit; cursor: pointer; border: none; background: none; }
   opacity: 0;
   transition: opacity 0.35s ease;
   pointer-events: none;
+  cursor: zoom-in;
 }
 .panorama-carousel__slide--active {
   opacity: 1;
@@ -391,6 +392,8 @@ button { font: inherit; cursor: pointer; border: none; background: none; }
   height: 100%;
   object-fit: contain;
   display: block;
+  user-select: none;
+  -webkit-user-drag: none;
 }
 .panorama-carousel__btn {
   position: absolute;
@@ -431,6 +434,53 @@ button { font: inherit; cursor: pointer; border: none; background: none; }
   letter-spacing: 0.1em;
   color: var(--text-muted);
   white-space: nowrap;
+}
+.panorama-carousel__slide--zoomed { cursor: grab; }
+.panorama-carousel__slide--dragging { cursor: grabbing; }
+.panorama-zoom-hint {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  z-index: 6;
+  font-size: 0.6rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.9);
+  background: rgba(0, 0, 0, 0.4);
+  padding: 3px 8px;
+  border-radius: 3px;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+.panorama-zoom-hint--hidden { opacity: 0; }
+.panorama-minimap {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  z-index: 6;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 3px;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+.panorama-minimap--visible { opacity: 1; }
+.panorama-minimap__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+}
+.panorama-minimap__viewport {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border: 1.5px solid rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.15);
+  box-sizing: border-box;
+  pointer-events: none;
 }
 
 /* ── Video wrapper (responsive 16:9) ────────────────────────── */
