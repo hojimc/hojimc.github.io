@@ -36,7 +36,9 @@
         var node = nodes[j];
         if (node.tagName === 'IFRAME' && !node.title) {
           node.title = albumTitle;
-          if (skeleton.parentNode) skeleton.parentNode.removeChild(skeleton);
+          node.addEventListener('load', function () {
+            if (skeleton.parentNode) skeleton.parentNode.removeChild(skeleton);
+          });
           observer.disconnect();
           return;
         }
@@ -44,9 +46,11 @@
           var iframes = node.querySelectorAll('iframe:not([title])');
           for (var k = 0; k < iframes.length; k++) {
             iframes[k].title = albumTitle;
+            iframes[k].addEventListener('load', function () {
+              if (skeleton.parentNode) skeleton.parentNode.removeChild(skeleton);
+            });
           }
           if (iframes.length) {
-            if (skeleton.parentNode) skeleton.parentNode.removeChild(skeleton);
             observer.disconnect();
             return;
           }
