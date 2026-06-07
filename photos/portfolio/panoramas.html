@@ -84,10 +84,6 @@
         <span class="panorama-carousel__counter" id="pan-counter">1 / 4</span>
       </div>
 
-      <div class="gallery-cta">
-        <a href="https://hojimc.tumblr.com" target="_blank" rel="noopener">View on Tumblr ↗</a>
-      </div>
-
     </div>
   </main>
 
@@ -116,6 +112,7 @@
       var captionEl = document.getElementById('pan-caption');
       var counterEl = document.getElementById('pan-counter');
       var current   = 0;
+      var carousel  = document.querySelector('.panorama-carousel');
 
       var zoomState = Array.from(slides).map(function () {
         return { zoomed: false, tx: 0, ty: 0 };
@@ -216,6 +213,8 @@
         img.style.transition = 'transform 0.3s ease';
         applyTransform(idx);
         setTimeout(function () { img.style.transition = ''; }, 350);
+        var newH = Math.round(Math.min(window.innerHeight * 0.75, carousel.offsetWidth * 0.75));
+        carousel.style.height = newH + 'px';
       }
 
       function zoomOut(idx) {
@@ -225,6 +224,7 @@
         img.style.transition = 'transform 0.3s ease';
         applyTransform(idx);
         setTimeout(function () { img.style.transition = ''; }, 350);
+        carousel.style.height = '';
       }
 
       // Mouse drag
@@ -301,6 +301,7 @@
           var totalDX = e.changedTouches[0].clientX - tDrag.startX;
           var totalDY = e.changedTouches[0].clientY - tDrag.startY;
           tDrag.active = false;
+          e.preventDefault();
           if (!zoomState[idx].zoomed) {
             if (Math.abs(totalDX) > 40 && Math.abs(totalDX) > Math.abs(totalDY)) {
               goTo(current + (totalDX < 0 ? 1 : -1));
@@ -321,6 +322,7 @@
           zoomState[current].zoomed = false;
           zoomState[current].tx = 0; zoomState[current].ty = 0;
           applyTransform(current);
+          carousel.style.height = '';
         }
         slides[current].classList.remove('panorama-carousel__slide--active');
         current = (index + slides.length) % slides.length;

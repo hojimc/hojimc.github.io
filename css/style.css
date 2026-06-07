@@ -366,6 +366,7 @@ button { font: inherit; cursor: pointer; border: none; background: none; }
   overflow: hidden;
   background: var(--bg-alt);
   aspect-ratio: 2 / 1;
+  transition: height 0.3s ease;
 }
 .panorama-carousel__track {
   width: 100%;
