@@ -104,17 +104,17 @@
       var ZOOM = 2.5;
       var MINIMAP_W = 110;
 
-      var slides   = document.querySelectorAll(‘.panorama-carousel__slide’);
+      var slides   = document.querySelectorAll('.panorama-carousel__slide');
       var captions = [
-        ‘Siesta Beach, Sarasota at 7am’,
-        ‘John Ringling Venetian Palace’,
-        ‘John Ringling Museum of Art — The garden of the C\xe0 d\'Zan mansion’,
-        ‘Le salon de notre maison’,
+        'Siesta Beach, Sarasota at 7am',
+        'John Ringling Venetian Palace',
+        'John Ringling Museum of Art — The garden of the C\xe0 d\'Zan mansion',
+        'Le salon de notre maison',
       ];
-      var prevBtn   = document.getElementById(‘pan-prev’);
-      var nextBtn   = document.getElementById(‘pan-next’);
-      var captionEl = document.getElementById(‘pan-caption’);
-      var counterEl = document.getElementById(‘pan-counter’);
+      var prevBtn   = document.getElementById('pan-prev');
+      var nextBtn   = document.getElementById('pan-next');
+      var captionEl = document.getElementById('pan-caption');
+      var counterEl = document.getElementById('pan-counter');
       var current   = 0;
 
       var zoomState = Array.from(slides).map(function () {
@@ -123,25 +123,25 @@
 
       // Inject minimap + hint into each slide
       slides.forEach(function (slide) {
-        var img = slide.querySelector(‘.panorama-carousel__img’);
+        var img = slide.querySelector('.panorama-carousel__img');
 
-        var minimap = document.createElement(‘div’);
-        minimap.className = ‘panorama-minimap’;
-        var mmImg = document.createElement(‘img’);
-        mmImg.className = ‘panorama-minimap__img’;
+        var minimap = document.createElement('div');
+        minimap.className = 'panorama-minimap';
+        var mmImg = document.createElement('img');
+        mmImg.className = 'panorama-minimap__img';
         mmImg.src = img.src;
-        mmImg.alt = ‘’;
-        mmImg.setAttribute(‘aria-hidden’, ‘true’);
-        var mmVP = document.createElement(‘div’);
-        mmVP.className = ‘panorama-minimap__viewport’;
+        mmImg.alt = '';
+        mmImg.setAttribute('aria-hidden', 'true');
+        var mmVP = document.createElement('div');
+        mmVP.className = 'panorama-minimap__viewport';
         minimap.appendChild(mmImg);
         minimap.appendChild(mmVP);
         slide.appendChild(minimap);
 
-        var hint = document.createElement(‘div’);
-        hint.className = ‘panorama-zoom-hint’;
-        hint.textContent = ‘click to zoom’;
-        hint.setAttribute(‘aria-hidden’, ‘true’);
+        var hint = document.createElement('div');
+        hint.className = 'panorama-zoom-hint';
+        hint.textContent = 'click to zoom';
+        hint.setAttribute('aria-hidden', 'true');
         slide.appendChild(hint);
       });
 
@@ -149,7 +149,7 @@
 
       function getGeometry(idx) {
         var slide = slides[idx];
-        var img = slide.querySelector(‘.panorama-carousel__img’);
+        var img = slide.querySelector('.panorama-carousel__img');
         var cW = slide.offsetWidth;
         var cH = slide.offsetHeight;
         var natW = img.naturalWidth  || 3;
@@ -168,40 +168,40 @@
       function updateMinimap(idx) {
         var s = zoomState[idx];
         var slide = slides[idx];
-        var minimap = slide.querySelector(‘.panorama-minimap’);
-        var mmVP = minimap.querySelector(‘.panorama-minimap__viewport’);
+        var minimap = slide.querySelector('.panorama-minimap');
+        var mmVP = minimap.querySelector('.panorama-minimap__viewport');
 
-        if (!s.zoomed) { minimap.classList.remove(‘panorama-minimap--visible’); return; }
-        minimap.classList.add(‘panorama-minimap--visible’);
+        if (!s.zoomed) { minimap.classList.remove('panorama-minimap--visible'); return; }
+        minimap.classList.add('panorama-minimap--visible');
 
         var g = getGeometry(idx);
         var mmH = Math.round(MINIMAP_W * g.dispH / g.dispW);
-        minimap.style.width  = MINIMAP_W + ‘px’;
-        minimap.style.height = mmH + ‘px’;
+        minimap.style.width  = MINIMAP_W + 'px';
+        minimap.style.height = mmH + 'px';
 
         var mmScale = MINIMAP_W / g.dispW;
         var vpLeft  = g.dispW / 2 - s.tx - g.cW / (2 * ZOOM);
         var vpTop   = g.dispH / 2 - s.ty - g.cH / (2 * ZOOM);
 
-        mmVP.style.left   = clamp(vpLeft * mmScale, 0, MINIMAP_W) + ‘px’;
-        mmVP.style.top    = clamp(vpTop  * mmScale, 0, mmH)       + ‘px’;
-        mmVP.style.width  = (g.cW / ZOOM * mmScale) + ‘px’;
-        mmVP.style.height = (g.cH / ZOOM * mmScale) + ‘px’;
+        mmVP.style.left   = clamp(vpLeft * mmScale, 0, MINIMAP_W) + 'px';
+        mmVP.style.top    = clamp(vpTop  * mmScale, 0, mmH)       + 'px';
+        mmVP.style.width  = (g.cW / ZOOM * mmScale) + 'px';
+        mmVP.style.height = (g.cH / ZOOM * mmScale) + 'px';
       }
 
       function applyTransform(idx) {
         var s = zoomState[idx];
         var slide = slides[idx];
-        var img = slide.querySelector(‘.panorama-carousel__img’);
-        var hint = slide.querySelector(‘.panorama-zoom-hint’);
+        var img = slide.querySelector('.panorama-carousel__img');
+        var hint = slide.querySelector('.panorama-zoom-hint');
         if (s.zoomed) {
-          img.style.transform = ‘scale(‘ + ZOOM + ‘) translate(‘ + s.tx + ‘px,’ + s.ty + ‘px)’;
-          slide.classList.add(‘panorama-carousel__slide--zoomed’);
-          if (hint) hint.classList.add(‘panorama-zoom-hint--hidden’);
+          img.style.transform = 'scale(' + ZOOM + ') translate(' + s.tx + 'px,' + s.ty + 'px)';
+          slide.classList.add('panorama-carousel__slide--zoomed');
+          if (hint) hint.classList.add('panorama-zoom-hint--hidden');
         } else {
-          img.style.transform = ‘’;
-          slide.classList.remove(‘panorama-carousel__slide--zoomed’);
-          if (hint) hint.classList.remove(‘panorama-zoom-hint--hidden’);
+          img.style.transform = '';
+          slide.classList.remove('panorama-carousel__slide--zoomed');
+          if (hint) hint.classList.remove('panorama-zoom-hint--hidden');
         }
         updateMinimap(idx);
       }
@@ -212,37 +212,37 @@
         s.zoomed = true;
         s.tx = clamp((clickX - g.cW / 2) * (1 - ZOOM) / ZOOM, -g.maxTX, g.maxTX);
         s.ty = clamp((clickY - g.cH / 2) * (1 - ZOOM) / ZOOM, -g.maxTY, g.maxTY);
-        var img = slides[idx].querySelector(‘.panorama-carousel__img’);
-        img.style.transition = ‘transform 0.3s ease’;
+        var img = slides[idx].querySelector('.panorama-carousel__img');
+        img.style.transition = 'transform 0.3s ease';
         applyTransform(idx);
-        setTimeout(function () { img.style.transition = ‘’; }, 350);
+        setTimeout(function () { img.style.transition = ''; }, 350);
       }
 
       function zoomOut(idx) {
         var s = zoomState[idx];
         s.zoomed = false; s.tx = 0; s.ty = 0;
-        var img = slides[idx].querySelector(‘.panorama-carousel__img’);
-        img.style.transition = ‘transform 0.3s ease’;
+        var img = slides[idx].querySelector('.panorama-carousel__img');
+        img.style.transition = 'transform 0.3s ease';
         applyTransform(idx);
-        setTimeout(function () { img.style.transition = ‘’; }, 350);
+        setTimeout(function () { img.style.transition = ''; }, 350);
       }
 
       // Mouse drag
       var drag = { active: false, idx: -1, startX: 0, startY: 0, lastX: 0, lastY: 0, moved: false };
 
       slides.forEach(function (slide, idx) {
-        slide.addEventListener(‘mousedown’, function (e) {
+        slide.addEventListener('mousedown', function (e) {
           drag.active = true; drag.idx = idx; drag.moved = false;
           drag.lastX = drag.startX = e.clientX;
           drag.lastY = drag.startY = e.clientY;
           if (zoomState[idx].zoomed) {
-            slide.classList.add(‘panorama-carousel__slide--dragging’);
+            slide.classList.add('panorama-carousel__slide--dragging');
             e.preventDefault();
           }
         });
       });
 
-      document.addEventListener(‘mousemove’, function (e) {
+      document.addEventListener('mousemove', function (e) {
         if (!drag.active || !zoomState[drag.idx].zoomed) return;
         var dx = e.clientX - drag.lastX;
         var dy = e.clientY - drag.lastY;
@@ -255,12 +255,12 @@
         applyTransform(drag.idx);
       });
 
-      document.addEventListener(‘mouseup’, function (e) {
+      document.addEventListener('mouseup', function (e) {
         if (!drag.active) return;
         var idx = drag.idx;
         var wasMoved = drag.moved;
         drag.active = false;
-        slides[idx].classList.remove(‘panorama-carousel__slide--dragging’);
+        slides[idx].classList.remove('panorama-carousel__slide--dragging');
         if (!wasMoved && idx === current) {
           var rect = slides[idx].getBoundingClientRect();
           if (!zoomState[idx].zoomed) zoomIn(idx, e.clientX - rect.left, e.clientY - rect.top);
@@ -272,14 +272,14 @@
       var tDrag = { active: false, idx: -1, startX: 0, startY: 0, lastX: 0, lastY: 0, moved: false };
 
       slides.forEach(function (slide, idx) {
-        slide.addEventListener(‘touchstart’, function (e) {
+        slide.addEventListener('touchstart', function (e) {
           if (e.touches.length !== 1) return;
           tDrag.active = true; tDrag.idx = idx; tDrag.moved = false;
           tDrag.startX = tDrag.lastX = e.touches[0].clientX;
           tDrag.startY = tDrag.lastY = e.touches[0].clientY;
         }, { passive: true });
 
-        slide.addEventListener(‘touchmove’, function (e) {
+        slide.addEventListener('touchmove', function (e) {
           if (!tDrag.active || e.touches.length !== 1 || !zoomState[idx].zoomed) return;
           var dx = e.touches[0].clientX - tDrag.lastX;
           var dy = e.touches[0].clientY - tDrag.lastY;
@@ -295,7 +295,7 @@
           e.preventDefault();
         }, { passive: false });
 
-        slide.addEventListener(‘touchend’, function (e) {
+        slide.addEventListener('touchend', function (e) {
           if (!tDrag.active) return;
           var wasMoved = tDrag.moved;
           var totalDX = e.changedTouches[0].clientX - tDrag.startX;
@@ -322,19 +322,19 @@
           zoomState[current].tx = 0; zoomState[current].ty = 0;
           applyTransform(current);
         }
-        slides[current].classList.remove(‘panorama-carousel__slide--active’);
+        slides[current].classList.remove('panorama-carousel__slide--active');
         current = (index + slides.length) % slides.length;
-        slides[current].classList.add(‘panorama-carousel__slide--active’);
+        slides[current].classList.add('panorama-carousel__slide--active');
         captionEl.textContent = captions[current];
-        counterEl.textContent = (current + 1) + ‘ / ‘ + slides.length;
+        counterEl.textContent = (current + 1) + ' / ' + slides.length;
       }
 
-      prevBtn.addEventListener(‘click’, function () { goTo(current - 1); });
-      nextBtn.addEventListener(‘click’, function () { goTo(current + 1); });
+      prevBtn.addEventListener('click', function () { goTo(current - 1); });
+      nextBtn.addEventListener('click', function () { goTo(current + 1); });
 
-      document.addEventListener(‘keydown’, function (e) {
-        if (e.key === ‘ArrowLeft’)  goTo(current - 1);
-        if (e.key === ‘ArrowRight’) goTo(current + 1);
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'ArrowLeft')  goTo(current - 1);
+        if (e.key === 'ArrowRight') goTo(current + 1);
       });
     })();
   </script>
