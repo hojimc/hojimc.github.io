@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Site Manager{% endblock %} — hojimc.github.io</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="site-header__inner">
+      <a href="/" class="site-header__logo">Site Manager</a>
+      <nav class="site-header__nav">
+        <a href="/photo" {% if request.path == '/photo' %}class="active"{% endif %}>Photo Album</a>
+        <a href="/video" {% if request.path == '/video' %}class="active"{% endif %}>Video</a>
+        <a href="/collection" {% if request.path == '/collection' %}class="active"{% endif %}>Collection</a>
+        <a href="/hash" {% if request.path == '/hash' %}class="active"{% endif %}>Password</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="main">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">
+    <p>Local admin tool for <a href="https://hojimc.github.io" target="_blank" rel="noopener">hojimc.github.io</a></p>
+  </footer>
+
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

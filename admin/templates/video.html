@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}Add a Video{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <a href="/" class="page-header__back">&larr; Back</a>
+  <h1 class="page-header__title">Add a Video</h1>
+  <p class="page-header__sub">Publishes a YouTube video to your site and adds it to the collection you choose.</p>
+</div>
+
+<form id="main-form" class="form" novalidate>
+
+  <fieldset class="form__section">
+    <legend class="form__legend">Required</legend>
+
+    <div class="form__field">
+      <label class="form__label" for="parent">
+        Where should this video appear? <span class="req">*</span>
+      </label>
+      <p class="form__hint">Choose the collection that this video belongs to.</p>
+      <select class="form__input" id="parent" name="parent" required>
+        <option value="">— choose a collection —</option>
+        {% for c in collections %}
+        <option value="{{ c.path }}">{{ c.label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="form__field">
+      <label class="form__label" for="youtube_id">
+        YouTube video ID <span class="req">*</span>
+      </label>
+      <p class="form__hint">Open the video on YouTube. The ID is the letters after <code>watch?v=</code> in the address bar — for example, in <code>youtube.com/watch?v=<strong>dQw4w9WgXcQ</strong></code> the ID is <code>dQw4w9WgXcQ</code>. It is always 11 characters.</p>
+      <input class="form__input form__input--short" type="text" id="youtube_id" name="youtube_id"
+             placeholder="dQw4w9WgXcQ" maxlength="11" required>
+    </div>
+
+    <div class="form__field">
+      <label class="form__label" for="location">
+        Location and year <span class="req">*</span>
+      </label>
+      <p class="form__hint">Shown under the video title. Format: <code>Place · Year</code> — for example, <code>Australia · 1995</code>. For home videos with a specific date: <code>December 25, 1998</code>.</p>
+      <input class="form__input" type="text" id="location" name="location"
+             placeholder="Australia · 1995" required>
+    </div>
+  </fieldset>
+
+  <fieldset class="form__section">
+    <legend class="form__legend">Optional</legend>
+
+    <div class="form__field">
+      <label class="form__label" for="description">Description</label>
+      <p class="form__hint">Default: none. A short paragraph shown under the location line.</p>
+      <textarea class="form__input form__textarea" id="description" name="description"
+                placeholder="A video from our trip to Australia…" rows="3"></textarea>
+    </div>
+
+    <div class="form__field">
+      <label class="form__label" for="password">Password</label>
+      <p class="form__hint">Default: none (page is public). If set, visitors must enter this password to view the video.</p>
+      <input class="form__input" type="text" id="password" name="password"
+             placeholder="leave blank for a public page">
+    </div>
+
+    <div class="form__field">
+      <label class="form__label" for="position">Position in the collection</label>
+      <p class="form__hint">Default: added at the end. Enter <code>1</code> to place this video first, <code>2</code> for second, and so on.</p>
+      <input class="form__input form__input--short" type="number" id="position" name="position"
+             placeholder="last" min="1">
+    </div>
+  </fieldset>
+
+  <div class="form__actions">
+    <button class="btn btn--primary" type="submit" id="submit-btn">Create Video Page</button>
+  </div>
+
+</form>
+
+<div id="log-wrap" class="log-wrap" hidden>
+  <h3 class="log-title">Result</h3>
+  <pre id="log" class="log"></pre>
+</div>
+{% endblock %}

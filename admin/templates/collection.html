@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+{% block title %}Create a Collection{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <a href="/" class="page-header__back">&larr; Back</a>
+  <h1 class="page-header__title">Create a Collection</h1>
+  <p class="page-header__sub">A collection is a folder that groups albums or videos together — for example, a country, year, or theme. Create the collection first, then add albums or videos to it.</p>
+</div>
+
+<form id="main-form" class="form" novalidate>
+
+  <fieldset class="form__section">
+    <legend class="form__legend">Required</legend>
+
+    <div class="form__field">
+      <label class="form__label">
+        Section <span class="req">*</span>
+      </label>
+      <p class="form__hint">Is this a photo collection or a video collection?</p>
+      <div class="form__radio-group">
+        <label class="form__radio">
+          <input type="radio" name="section" value="photos" id="section-photos" checked>
+          <span>Photos</span>
+        </label>
+        <label class="form__radio">
+          <input type="radio" name="section" value="videos" id="section-videos">
+          <span>Videos</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="form__field">
+      <label class="form__label" for="parent">
+        Where should this collection appear? <span class="req">*</span>
+      </label>
+      <p class="form__hint">Choose the parent. Most collections go directly under "My Photos" or "My Videos". You can also nest one collection inside another.</p>
+      <select class="form__input" id="parent" name="parent" required>
+        <option value="">— choose a location —</option>
+        {% for c in collections %}
+        <option value="{{ c.path }}" data-section="{{ c.section }}">{{ c.label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="form__field">
+      <label class="form__label" for="title">
+        Collection title <span class="req">*</span>
+      </label>
+      <p class="form__hint">The name shown as the page title and on the card. For example: <code>Sarasota</code>, <code>Greece</code>, or <code>Drone Videos</code>.</p>
+      <input class="form__input" type="text" id="title" name="title"
+             placeholder="Sarasota" required>
+    </div>
+  </fieldset>
+
+  <fieldset class="form__section">
+    <legend class="form__legend">Optional</legend>
+
+    <div class="form__field">
+      <label class="form__label" for="meta">Subtitle</label>
+      <p class="form__hint">Default: <code>0 albums</code> or <code>0 videos</code> (updates automatically as you add pages). You can write something like <code>Florida, USA · 3 albums</code> to include the location.</p>
+      <input class="form__input" type="text" id="meta" name="meta"
+             placeholder="Florida, USA · 0 albums">
+    </div>
+
+    <div class="form__field">
+      <label class="form__label" for="description">Description</label>
+      <p class="form__hint">Default: none. A paragraph shown at the top of the collection page.</p>
+      <textarea class="form__input form__textarea" id="description" name="description"
+                placeholder="Our travels in Florida over the years…" rows="3"></textarea>
+    </div>
+
+    <div class="form__field">
+      <label class="form__label" for="thumbnail">Thumbnail URL</label>
+      <p class="form__hint">Default: none (card will have a grey placeholder). Paste an image URL to use as the card thumbnail.</p>
+      <input class="form__input" type="url" id="thumbnail" name="thumbnail"
+             placeholder="https://…">
+    </div>
+
+    <div class="form__field" id="youtube-id-field">
+      <label class="form__label" for="youtube_id">YouTube video ID (for thumbnail)</label>
+      <p class="form__hint">For video collections only. Enter a YouTube video ID to use its thumbnail image for the card. Ignored if a Thumbnail URL is provided above.</p>
+      <input class="form__input form__input--short" type="text" id="youtube_id" name="youtube_id"
+             placeholder="dQw4w9WgXcQ" maxlength="11">
+    </div>
+
+    <div class="form__field">
+      <label class="form__label" for="position">Position in the parent</label>
+      <p class="form__hint">Default: added at the end. Enter <code>1</code> to place this collection first.</p>
+      <input class="form__input form__input--short" type="number" id="position" name="position"
+             placeholder="last" min="1">
+    </div>
+  </fieldset>
+
+  <div class="form__actions">
+    <button class="btn btn--primary" type="submit" id="submit-btn">Create Collection</button>
+  </div>
+
+</form>
+
+<div id="log-wrap" class="log-wrap" hidden>
+  <h3 class="log-title">Result</h3>
+  <pre id="log" class="log"></pre>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // Filter parent dropdown by selected section
+  const radios = document.querySelectorAll('input[name="section"]');
+  const parentSelect = document.getElementById('parent');
+  const ytField = document.getElementById('youtube-id-field');
+
+  function filterParents() {
+    const section = document.querySelector('input[name="section"]:checked').value;
+    Array.from(parentSelect.options).forEach(opt => {
+      if (!opt.value) return; // keep placeholder
+      opt.hidden = opt.dataset.section !== section;
+    });
+    // Reset selection if current choice is now hidden
+    const selected = parentSelect.options[parentSelect.selectedIndex];
+    if (selected && selected.hidden) parentSelect.value = '';
+    // Show/hide YouTube ID field
+    ytField.hidden = section !== 'videos';
+  }
+
+  radios.forEach(r => r.addEventListener('change', filterParents));
+  filterParents(); // run on load
+</script>
+{% endblock %}

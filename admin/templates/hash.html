@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Generate a Password Code{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <a href="/" class="page-header__back">&larr; Back</a>
+  <h1 class="page-header__title">Generate a Password Code</h1>
+  <p class="page-header__sub">When creating a password-protected page, you need to enter the password as a security code (called a hash). Type the password below to generate the code.</p>
+</div>
+
+<form id="main-form" class="form" novalidate>
+  <fieldset class="form__section">
+    <legend class="form__legend">Password</legend>
+
+    <div class="form__field">
+      <label class="form__label" for="password">
+        Password <span class="req">*</span>
+      </label>
+      <p class="form__hint">Type the password you want to use. The site's standard password is <code>Claude</code> (capital C).</p>
+      <input class="form__input form__input--medium" type="text" id="password" name="password"
+             placeholder="Claude" required autocomplete="off">
+    </div>
+  </fieldset>
+
+  <div class="form__actions">
+    <button class="btn btn--primary" type="submit" id="submit-btn">Generate Code</button>
+  </div>
+</form>
+
+<div id="log-wrap" class="log-wrap" hidden>
+  <h3 class="log-title">Security code for <span id="pw-label"></span></h3>
+  <pre id="log" class="log log--hash"></pre>
+  <button class="btn btn--secondary" id="copy-btn" type="button">Copy code</button>
+  <span id="copy-confirm" class="copy-confirm" hidden>Copied!</span>
+  <p class="form__hint" style="margin-top:1rem;">Paste this code into the <code>data-hash</code> field when creating the password-protected page.</p>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  document.getElementById('copy-btn').addEventListener('click', function () {
+    const hash = document.getElementById('log').textContent.trim();
+    navigator.clipboard.writeText(hash).then(() => {
+      const confirm = document.getElementById('copy-confirm');
+      confirm.hidden = false;
+      setTimeout(() => { confirm.hidden = true; }, 2000);
+    });
+  });
+</script>
+{% endblock %}

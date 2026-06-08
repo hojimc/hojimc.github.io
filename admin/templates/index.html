@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1 class="page-header__title">What would you like to do?</h1>
+  <p class="page-header__sub">Choose an action. Each form will guide you step by step.</p>
+</div>
+
+<div class="action-grid">
+
+  <a href="/photo" class="action-card">
+    <div class="action-card__tag">Photo Album</div>
+    <h2 class="action-card__title">Add a Photo Album</h2>
+    <p class="action-card__desc">Publish a Google Photos album to your site. You will need the album's sharing link.</p>
+  </a>
+
+  <a href="/video" class="action-card">
+    <div class="action-card__tag">Video</div>
+    <h2 class="action-card__title">Add a Video</h2>
+    <p class="action-card__desc">Publish a YouTube video to your site. You will need the video ID (the letters after <code>watch?v=</code>).</p>
+  </a>
+
+  <a href="/collection" class="action-card">
+    <div class="action-card__tag">Collection</div>
+    <h2 class="action-card__title">Create a Collection</h2>
+    <p class="action-card__desc">Create a folder to group albums or videos together — for example, a new country, year, or theme.</p>
+  </a>
+
+  <a href="/hash" class="action-card">
+    <div class="action-card__tag">Utility</div>
+    <h2 class="action-card__title">Generate a Password Code</h2>
+    <p class="action-card__desc">Get the security code needed to password-protect a page. Use this before creating a protected page.</p>
+  </a>
+
+</div>
+{% endblock %}
