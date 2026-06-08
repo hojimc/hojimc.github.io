@@ -62,36 +62,59 @@
   });
   observer.observe(document.body, { childList: true, subtree: true });
 
-  // On mobile, the play button sets f=true but autoplay never starts because
-  // Jh() (the autoplay gate) is only triggered from touchend — not from the
-  // play button's click handler, and not from mousemove (which doesn't exist
-  // on touch). We listen for clicks inside the same-origin srcdoc iframe using
-  // capture phase (bypasses stopPropagation in the play button's handler), then
-  // dispatch a zero-movement touchstart+touchend. No touchmove means the K
-  // (swiping) flag stays false, so no navigation occurs and Jh() sees
-  // f && !K && items>1 and starts the timer.
+  // On mobile, publicalbum's autoplay never starts after tapping the play button.
+  // Root cause: the button tap fires touchend (which publicalbum intercepts and
+  // likely calls preventDefault on, suppressing the synthetic click), then sets
+  // f=true internally — but nothing subsequently triggers the autoplay timer.
+  // Fix: intercept the play button's touchend in capture phase (before publicalbum
+  // handles it), track play/pause state ourselves, and drive the carousel with our
+  // own setInterval that dispatches a forward swipe every 5s. A left swipe
+  // (finger moves left = next image) uses >20% of carousel width to clear
+  // publicalbum's navigation threshold (Zg=0.2). Confirmed via prior testing that
+  // synthetic touchstart+touchmove+touchend on .jx-gallery-player does reach and
+  // trigger publicalbum's swipe handler.
   function enableMobileAutoplay(iframe) {
     if (!iframe || !('ontouchstart' in window)) return;
     setTimeout(function () {
       try {
         var doc = iframe.contentDocument;
         if (!doc || !doc.body) return;
+        var playBtn = doc.querySelector('.jx-svg-round-button');
+        if (!playBtn) return;
+
         var w = doc.documentElement.clientWidth || iframe.clientWidth || 375;
         var h = doc.documentElement.clientHeight || iframe.clientHeight || 300;
         var cx = w / 2;
         var cy = h / 2;
+        var dx = Math.ceil(w * 0.25); // 25% — above the 20% navigation threshold
 
-        doc.addEventListener('click', function () {
-          // 50ms: let the play button's click handler set f before we fire touchend.
-          setTimeout(function () {
-            try {
-              var target = doc.querySelector('.jx-gallery-player') || doc.body;
-              var touch = new Touch({ identifier: Date.now(), target: target, clientX: cx, clientY: cy, pageX: cx, pageY: cy });
-              target.dispatchEvent(new TouchEvent('touchstart', { bubbles: true, cancelable: true, touches: [touch], changedTouches: [touch] }));
-              target.dispatchEvent(new TouchEvent('touchend',   { bubbles: true, cancelable: true, touches: [],      changedTouches: [touch] }));
-            } catch (e) {}
-          }, 50);
-        }, true); // capture: fires before stopPropagation() in the button handler
+        var playing = false;
+        var autoplayTimer = null;
+
+        function swipeForward() {
+          try {
+            var target = doc.querySelector('.jx-gallery-player') || doc.body;
+            var id = Date.now();
+            var t1 = new Touch({ identifier: id, target: target, clientX: cx,      clientY: cy, pageX: cx,      pageY: cy });
+            var t2 = new Touch({ identifier: id, target: target, clientX: cx - dx, clientY: cy, pageX: cx - dx, pageY: cy });
+            target.dispatchEvent(new TouchEvent('touchstart', { bubbles: true, cancelable: true, touches: [t1], changedTouches: [t1] }));
+            target.dispatchEvent(new TouchEvent('touchmove',  { bubbles: true, cancelable: true, touches: [t2], changedTouches: [t2] }));
+            target.dispatchEvent(new TouchEvent('touchend',   { bubbles: true, cancelable: true, touches: [],   changedTouches: [t2] }));
+          } catch (err) {}
+        }
+
+        // Capture phase: fires before publicalbum's touchend handler, ensuring we
+        // track the toggle on every play/pause tap even if propagation is stopped.
+        playBtn.addEventListener('touchend', function () {
+          playing = !playing;
+          if (playing) {
+            autoplayTimer = setInterval(swipeForward, 5000);
+          } else {
+            clearInterval(autoplayTimer);
+            autoplayTimer = null;
+          }
+        }, true);
+
       } catch (e) {}
     }, 400);
   }
