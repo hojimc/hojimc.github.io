@@ -63,11 +63,12 @@
   observer.observe(document.body, { childList: true, subtree: true });
 
   // On mobile, the play button sets f=true but autoplay never starts because
-  // the widget's Ad() timer-restart function only fires on mousemove — which
-  // doesn't exist on touch devices. We listen for any click inside the
-  // same-origin srcdoc iframe and dispatch a mousemove (primary path, mirrors
-  // desktop) plus a sub-threshold swipe (secondary path, triggers Jh()) so
-  // that whichever path the widget uses, the timer starts.
+  // Jh() (the autoplay gate) is only triggered from touchend — not from the
+  // play button's click handler, and not from mousemove (which doesn't exist
+  // on touch). We listen for any click inside the same-origin srcdoc iframe,
+  // then dispatch a zero-movement touchstart+touchend. No touchmove means the
+  // K (swiping) flag is never set, so no navigation occurs and Jh() sees
+  // f && !K && items>1 and starts the timer.
   function enableMobileAutoplay(iframe) {
     if (!iframe || !('ontouchstart' in window)) return;
     setTimeout(function () {
@@ -78,21 +79,17 @@
         var h = doc.documentElement.clientHeight || iframe.clientHeight || 300;
         var cx = w / 2;
         var cy = h / 2;
-        // Swipe distance: 15% of carousel width — below the 20% navigation threshold.
-        var dx = Math.max(20, Math.floor(w * 0.15));
 
         doc.addEventListener('click', function () {
-          // Wait 50ms for the click handler (e.g. play button) to update f,
-          // then dispatch a sub-threshold swipe. touchend fires Jh(), which
-          // checks f before starting the timer — so pause clicks are safe.
+          // Wait 50ms for the click handler (e.g. play button) to set f,
+          // then fire touchstart+touchend at the same point. Jh() checks f
+          // before starting — safe to fire on pause clicks too (f=false → no-op).
           setTimeout(function () {
             try {
-              var el = doc.elementFromPoint(cx, cy) || doc.body;
-              var t1 = new Touch({ identifier: 1, target: el, clientX: cx,      clientY: cy, pageX: cx,      pageY: cy });
-              var t2 = new Touch({ identifier: 1, target: el, clientX: cx + dx, clientY: cy, pageX: cx + dx, pageY: cy });
-              el.dispatchEvent(new TouchEvent('touchstart', { bubbles: true, cancelable: true, touches: [t1], changedTouches: [t1] }));
-              el.dispatchEvent(new TouchEvent('touchmove',  { bubbles: true, cancelable: true, touches: [t2], changedTouches: [t2] }));
-              el.dispatchEvent(new TouchEvent('touchend',   { bubbles: true, cancelable: true, touches: [],   changedTouches: [t2] }));
+              var target = doc.querySelector('.jx-gallery-player') || doc.body;
+              var touch = new Touch({ identifier: Date.now(), target: target, clientX: cx, clientY: cy, pageX: cx, pageY: cy });
+              target.dispatchEvent(new TouchEvent('touchstart', { bubbles: true, cancelable: true, touches: [touch], changedTouches: [touch] }));
+              target.dispatchEvent(new TouchEvent('touchend',   { bubbles: true, cancelable: true, touches: [],      changedTouches: [touch] }));
             } catch (e) {}
           }, 50);
         });
