@@ -658,6 +658,20 @@ button { font: inherit; cursor: pointer; border: none; background: none; }
   min-height: 1.5em;
   margin-top: 4px;
 }
+.auth-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 28px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  transition: color var(--transition);
+}
+.auth-back::before { content: '\2190'; margin-right: 2px; }
+.auth-back:hover { color: var(--text); }
 @keyframes shake {
   0%, 100% { transform: translateX(0); }
   20%       { transform: translateX(-8px); }

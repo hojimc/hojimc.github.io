@@ -70,6 +70,16 @@
 
     document.body.appendChild(overlay);
 
+    // Back link — lets users navigate away without knowing the password
+    var backEl = document.querySelector('.page-header__back');
+    if (backEl) {
+      var authBack = document.createElement('a');
+      authBack.href = backEl.getAttribute('href');
+      authBack.className = 'auth-back';
+      authBack.textContent = backEl.textContent.trim();
+      overlay.querySelector('.auth-box').appendChild(authBack);
+    }
+
     // Autofocus the password field
     const input   = overlay.querySelector('#auth-input');
     const errorEl = overlay.querySelector('#auth-error');
