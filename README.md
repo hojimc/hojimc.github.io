@@ -101,17 +101,6 @@ git push
 
 ---
 
-## Claude Ho-Jim — Adding a blog post (via GitHub.com)
-
-1. Go to the `blog/` folder on GitHub
-2. Click **Add file → Create new file**, name it `destination-year.html`
-3. Copy the contents of `blog/_template.html`
-4. Fill in all sections marked `✏️ EDIT` (title, date, text, photos, embeds)
-5. Open `blog.html` and add a new `.blog-card` entry (see the commented example inside that file)
-6. Click **Commit changes** — live within ~60 seconds
-
----
-
 ## All Google Photos album links
 
 All album links are stored in **`links.md`** in the project root (not pushed to GitHub — local only).

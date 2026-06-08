@@ -218,7 +218,6 @@ def _nav(section: str) -> str:
       <ul class="nav__links" id="nav-links" role="list">
         <li><a href="/"            class="nav__link{pa}">My Photos</a></li>
         <li><a href="/videos.html" class="nav__link{va}">My Videos</a></li>
-        <li><a href="/blog.html"   class="nav__link">My Blog</a></li>
       </ul>
     </div>
   </nav>"""
