@@ -38,7 +38,7 @@
           node.title = albumTitle;
           node.addEventListener('load', function () {
             if (skeleton.parentNode) skeleton.parentNode.removeChild(skeleton);
-            primeTouchAutoplay(node);
+            enableMobileAutoplay(node);
           });
           observer.disconnect();
           return;
@@ -49,7 +49,7 @@
             iframes[k].title = albumTitle;
             iframes[k].addEventListener('load', function () {
               if (skeleton.parentNode) skeleton.parentNode.removeChild(skeleton);
-              primeTouchAutoplay(this);
+              enableMobileAutoplay(this);
             });
           }
           if (iframes.length) {
@@ -62,26 +62,40 @@
   });
   observer.observe(document.body, { childList: true, subtree: true });
 
-  // On mobile, the publicalbum widget (same-origin srcdoc iframe) requires a
-  // touchmove event to have occurred before the play button can start autoplay.
-  // Dispatching a synthetic 1px swipe at load time primes the widget invisibly —
-  // 1px is well below the photo-navigation threshold so no visual change occurs.
-  function primeTouchAutoplay(iframe) {
+  // On mobile, the play button sets f=true but autoplay never starts because
+  // the widget's Ad() timer-restart function only fires on mousemove — which
+  // doesn't exist on touch devices. We listen for any click inside the
+  // same-origin srcdoc iframe and dispatch a mousemove (primary path, mirrors
+  // desktop) plus a sub-threshold swipe (secondary path, triggers Jh()) so
+  // that whichever path the widget uses, the timer starts.
+  function enableMobileAutoplay(iframe) {
     if (!iframe || !('ontouchstart' in window)) return;
     setTimeout(function () {
       try {
         var doc = iframe.contentDocument;
         if (!doc || !doc.body) return;
-        var w = doc.documentElement.clientWidth || iframe.clientWidth || 300;
-        var h = doc.documentElement.clientHeight || iframe.clientHeight || 200;
+        var w = doc.documentElement.clientWidth || iframe.clientWidth || 375;
+        var h = doc.documentElement.clientHeight || iframe.clientHeight || 300;
         var cx = w / 2;
         var cy = h / 2;
-        var el = doc.elementFromPoint(cx, cy) || doc.body;
-        var t1 = new Touch({ identifier: 1, target: el, clientX: cx,     clientY: cy, pageX: cx,     pageY: cy });
-        var t2 = new Touch({ identifier: 1, target: el, clientX: cx + 1, clientY: cy, pageX: cx + 1, pageY: cy });
-        el.dispatchEvent(new TouchEvent('touchstart', { bubbles: true, cancelable: true, touches: [t1], targetTouches: [t1], changedTouches: [t1] }));
-        el.dispatchEvent(new TouchEvent('touchmove',  { bubbles: true, cancelable: true, touches: [t2], targetTouches: [t2], changedTouches: [t2] }));
-        el.dispatchEvent(new TouchEvent('touchend',   { bubbles: true, cancelable: true, touches: [],   targetTouches: [],   changedTouches: [t2] }));
+        // Swipe distance: 15% of carousel width — below the 20% navigation threshold.
+        var dx = Math.max(20, Math.floor(w * 0.15));
+
+        doc.addEventListener('click', function () {
+          // Wait 50ms for the click handler (e.g. play button) to update f,
+          // then dispatch a sub-threshold swipe. touchend fires Jh(), which
+          // checks f before starting the timer — so pause clicks are safe.
+          setTimeout(function () {
+            try {
+              var el = doc.elementFromPoint(cx, cy) || doc.body;
+              var t1 = new Touch({ identifier: 1, target: el, clientX: cx,      clientY: cy, pageX: cx,      pageY: cy });
+              var t2 = new Touch({ identifier: 1, target: el, clientX: cx + dx, clientY: cy, pageX: cx + dx, pageY: cy });
+              el.dispatchEvent(new TouchEvent('touchstart', { bubbles: true, cancelable: true, touches: [t1], changedTouches: [t1] }));
+              el.dispatchEvent(new TouchEvent('touchmove',  { bubbles: true, cancelable: true, touches: [t2], changedTouches: [t2] }));
+              el.dispatchEvent(new TouchEvent('touchend',   { bubbles: true, cancelable: true, touches: [],   changedTouches: [t2] }));
+            } catch (e) {}
+          }, 50);
+        });
       } catch (e) {}
     }, 400);
   }
