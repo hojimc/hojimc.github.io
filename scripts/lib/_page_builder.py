@@ -212,9 +212,6 @@ def _nav(section: str) -> str:
   <nav class="nav" aria-label="Main navigation">
     <div class="nav__inner">
       <a href="/" class="nav__logo">{SITE_OWNER}</a>
-      <button class="nav__toggle" aria-label="Toggle navigation" aria-expanded="false">
-        <span></span><span></span><span></span>
-      </button>
       <ul class="nav__links" id="nav-links" role="list">
         <li><a href="/"            class="nav__link{pa}">My Photos</a></li>
         <li><a href="/videos.html" class="nav__link{va}">My Videos</a></li>
