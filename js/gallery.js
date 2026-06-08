@@ -147,7 +147,6 @@
 
         // Use a fixed offset of 40% of viewport — always above the 20% threshold
         var offset = -(doc.documentElement.clientWidth || iframe.clientWidth || 390) * 0.4;
-        var autoplayTimer = null;
 
         function advanceSlide() {
           try {
@@ -156,7 +155,9 @@
           } catch (e) {}
         }
 
-        // Watch the big play button: display:flex → :none means user tapped play
+        // Watch the big play button: display:flex → :none means user tapped play.
+        // Fire one advance after 5s to kick-start publicalbum's native autoplay,
+        // then let native handle everything (including pause).
         var allBtns = doc.querySelectorAll('.jx-svg-round-button');
         var bigBtn = null;
         for (var i = allBtns.length - 1; i >= 0; i--) {
@@ -164,12 +165,17 @@
         }
         if (!bigBtn) return;
 
+        var pendingTimer = null;
         new MutationObserver(function () {
-          if (bigBtn.style.display !== 'flex' && autoplayTimer === null) {
-            autoplayTimer = setInterval(advanceSlide, 5000);
-          } else if (bigBtn.style.display === 'flex' && autoplayTimer !== null) {
-            clearInterval(autoplayTimer);
-            autoplayTimer = null;
+          if (bigBtn.style.display !== 'flex') {
+            if (pendingTimer === null) {
+              pendingTimer = setTimeout(function () {
+                pendingTimer = null;
+                if (bigBtn.style.display !== 'flex') advanceSlide();
+              }, 5000);
+            }
+          } else {
+            if (pendingTimer !== null) { clearTimeout(pendingTimer); pendingTimer = null; }
           }
         }).observe(bigBtn, { attributes: true, attributeFilter: ['style'] });
 
