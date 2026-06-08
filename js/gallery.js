@@ -65,9 +65,10 @@
   // On mobile, the play button sets f=true but autoplay never starts because
   // Jh() (the autoplay gate) is only triggered from touchend — not from the
   // play button's click handler, and not from mousemove (which doesn't exist
-  // on touch). We listen for any click inside the same-origin srcdoc iframe,
-  // then dispatch a zero-movement touchstart+touchend. No touchmove means the
-  // K (swiping) flag is never set, so no navigation occurs and Jh() sees
+  // on touch). We listen for clicks inside the same-origin srcdoc iframe using
+  // capture phase (bypasses stopPropagation in the play button's handler), then
+  // dispatch a zero-movement touchstart+touchend. No touchmove means the K
+  // (swiping) flag stays false, so no navigation occurs and Jh() sees
   // f && !K && items>1 and starts the timer.
   function enableMobileAutoplay(iframe) {
     if (!iframe || !('ontouchstart' in window)) return;
@@ -81,9 +82,7 @@
         var cy = h / 2;
 
         doc.addEventListener('click', function () {
-          // Wait 50ms for the click handler (e.g. play button) to set f,
-          // then fire touchstart+touchend at the same point. Jh() checks f
-          // before starting — safe to fire on pause clicks too (f=false → no-op).
+          // 50ms: let the play button's click handler set f before we fire touchend.
           setTimeout(function () {
             try {
               var target = doc.querySelector('.jx-gallery-player') || doc.body;
@@ -92,7 +91,7 @@
               target.dispatchEvent(new TouchEvent('touchend',   { bubbles: true, cancelable: true, touches: [],      changedTouches: [touch] }));
             } catch (e) {}
           }, 50);
-        });
+        }, true); // capture: fires before stopPropagation() in the button handler
       } catch (e) {}
     }, 400);
   }
